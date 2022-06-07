@@ -11,22 +11,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const fileInput = document.getElementById("folderPicker");
 fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
     const { files, input } = yield window.electronAPI.openDir();
-    console.log(files);
+    console.log(files, input);
     const root = document.getElementById("root");
-    const addListItem = (fileArray, parentElement) => {
+    root.replaceChildren();
+    const addListItem = (fileArray, parentElement, folderName) => {
         const elementList = document.createElement("div");
-        for (let file of fileArray) {
-            if (typeof file === "string") {
+        for (let i = 0; i < fileArray.length; i++) {
+            if (typeof fileArray[i] === "string") {
                 const fileElement = document.createElement("div");
-                fileElement.textContent = file.replace(new RegExp(`${input}/`, "g"), "");
+                fileElement.textContent = fileArray[i].replace(new RegExp(`${folderName}/`, "g"), "");
                 elementList.append(fileElement);
             }
             else {
-                console.log(file);
-                addListItem(file, elementList);
+                // console.log(file)
+                addListItem(fileArray[i], elementList, fileArray[i - 1]);
             }
         }
         parentElement.append(elementList);
     };
-    addListItem(files, root);
+    addListItem(files, root, input);
 }));

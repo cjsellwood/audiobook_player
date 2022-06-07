@@ -1,7 +1,18 @@
+#root {
+  border: none;
+}
+
 #root > div {
   padding: 0;
+  border: none;
+}
+
+#root > div > div {
+  padding: 0;
+  border: none;
 }
 
 div {
   padding-left: 24px;
+  border-left: 1px solid rgb(182, 182, 182);
 }
