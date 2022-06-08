@@ -1,4 +1,7 @@
-type RecursiveDir = (string | RecursiveDir)[];
+type RecursiveDir = {
+  folder: string;
+  children: (RecursiveDir | string)[];
+};
 
 const fileInput = document.getElementById("folderPicker")! as HTMLButtonElement;
 fileInput.addEventListener("click", async (e) => {
@@ -7,28 +10,48 @@ fileInput.addEventListener("click", async (e) => {
 
   const root = document.getElementById("root")! as HTMLDivElement;
 
-  root.replaceChildren()
+  root.replaceChildren();
+
+  const title = document.createElement("h3");
+  title.textContent = input;
+  root.append(title);
 
   const addListItem = (
-    fileArray: RecursiveDir,
+    fileArray: (RecursiveDir | string)[],
     parentElement: HTMLDivElement,
     folderName: string
   ) => {
     const elementList = document.createElement("div");
     for (let i = 0; i < fileArray.length; i++) {
       if (typeof fileArray[i] === "string") {
-        const fileElement = document.createElement("div");
-        fileElement.textContent = (fileArray[i] as string).replace(
-          new RegExp(`${folderName}/`, "g"),
-          ""
-        );
+        const fileElement = document.createElement("p");
+        fileElement.textContent =
+          "📄 " +
+          (fileArray[i] as string).replace(
+            new RegExp(`${folderName}/`, "g"),
+            ""
+          );
         elementList.append(fileElement);
       } else {
-        // console.log(file)
+        const folderP = document.createElement("p");
+        // elementList.append(
+        //   "📁 " +
+        //     (fileArray[i] as RecursiveDir).folder.replace(
+        //       new RegExp(`${folderName}/`, "g"),
+        //       ""
+        //     )
+        // );
+        folderP.textContent =
+          "📁 " +
+          (fileArray[i] as RecursiveDir).folder.replace(
+            new RegExp(`${folderName}/`, "g"),
+            ""
+          );
+        elementList.append(folderP);
         addListItem(
-          fileArray[i] as RecursiveDir,
+          (fileArray[i] as RecursiveDir).children as (RecursiveDir | string)[],
           elementList,
-          fileArray[i - 1] as string
+          (fileArray[i] as RecursiveDir).folder
         );
       }
     }

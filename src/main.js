@@ -64,9 +64,9 @@ electron_1.app.whenReady().then(() => {
         for (let i of list) {
             console.log(path_1.default.resolve(dir, i.name), i.isDirectory());
             if (i.isDirectory()) {
-                result.push(path_1.default.resolve(dir, i.name));
                 const subDir = yield expandDirectory(path_1.default.resolve(dir, i.name));
-                result.push(subDir);
+                console.log("subDir", subDir);
+                result.push({ folder: path_1.default.resolve(dir, i.name), children: subDir });
             }
             else {
                 result.push(path_1.default.resolve(dir, i.name));

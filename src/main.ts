@@ -2,7 +2,11 @@ import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "path";
 import * as fs from "node:fs/promises";
 
-type RecursiveDir = (string | RecursiveDir)[];
+// type RecursiveDir = (string | RecursiveDir)[];
+type RecursiveDir = {
+  folder: string;
+  children: (RecursiveDir | string)[];
+};
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -25,21 +29,20 @@ const createWindow = () => {
 app.whenReady().then(() => {
   const mainWindow = createWindow();
 
-  const expandDirectory = async (dir: string): Promise<RecursiveDir> => {
+  const expandDirectory = async (dir: string): Promise<(RecursiveDir | string)[]> => {
     console.log(dir);
     const list = await fs.readdir(dir, {
       withFileTypes: true,
     });
 
     console.log(list);
-    const result = [];
+    const result: (RecursiveDir | string)[] = [];
     for (let i of list) {
       console.log(path.resolve(dir, i.name), i.isDirectory());
       if (i.isDirectory()) {
-        result.push(path.resolve(dir, i.name));
-        
         const subDir = await expandDirectory(path.resolve(dir, i.name));
-        result.push(subDir);
+        console.log("subDir", subDir);
+        result.push({ folder: path.resolve(dir, i.name), children: subDir });
       } else {
         result.push(path.resolve(dir, i.name));
       }

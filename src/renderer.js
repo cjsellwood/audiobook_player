@@ -14,17 +14,33 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     console.log(files, input);
     const root = document.getElementById("root");
     root.replaceChildren();
+    const title = document.createElement("h3");
+    title.textContent = input;
+    root.append(title);
     const addListItem = (fileArray, parentElement, folderName) => {
         const elementList = document.createElement("div");
         for (let i = 0; i < fileArray.length; i++) {
             if (typeof fileArray[i] === "string") {
-                const fileElement = document.createElement("div");
-                fileElement.textContent = fileArray[i].replace(new RegExp(`${folderName}/`, "g"), "");
+                const fileElement = document.createElement("p");
+                fileElement.textContent =
+                    "📄 " +
+                        fileArray[i].replace(new RegExp(`${folderName}/`, "g"), "");
                 elementList.append(fileElement);
             }
             else {
-                // console.log(file)
-                addListItem(fileArray[i], elementList, fileArray[i - 1]);
+                const folderP = document.createElement("p");
+                // elementList.append(
+                //   "📁 " +
+                //     (fileArray[i] as RecursiveDir).folder.replace(
+                //       new RegExp(`${folderName}/`, "g"),
+                //       ""
+                //     )
+                // );
+                folderP.textContent =
+                    "📁 " +
+                        fileArray[i].folder.replace(new RegExp(`${folderName}/`, "g"), "");
+                elementList.append(folderP);
+                addListItem(fileArray[i].children, elementList, fileArray[i].folder);
             }
         }
         parentElement.append(elementList);
