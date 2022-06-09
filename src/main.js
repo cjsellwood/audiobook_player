@@ -68,7 +68,7 @@ electron_1.app.whenReady().then(() => {
             if (i.isDirectory()) {
                 const subDir = yield expandDirectory(path_1.default.resolve(dir, i.name));
                 // console.log("subDir", subDir);
-                result.push({ folder: path_1.default.resolve(dir, i.name), children: subDir });
+                // result.push({ folder: path.resolve(dir, i.name), children: subDir });
             }
             else {
                 result.push(path_1.default.resolve(dir, i.name));
@@ -120,8 +120,8 @@ electron_1.app.whenReady().then(() => {
             }
             else {
                 return {
-                    input: input.filePaths[0],
-                    files: list,
+                    // input: input.filePaths[0],
+                    // files: list,
                     audioBooks: audioBooksData,
                 };
             }

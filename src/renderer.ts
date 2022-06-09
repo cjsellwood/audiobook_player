@@ -88,6 +88,8 @@ window.addEventListener("load", async () => {
 fileInput.addEventListener("click", async (e) => {
   root.replaceChildren();
   root.append((document.createElement("h1").textContent = "LOADING"));
+  const loader = document.querySelector(".lds-ring")! as HTMLDivElement;
+  loader.style.display = "flex";
   const {
     files,
     input,
@@ -127,8 +129,7 @@ fileInput.addEventListener("click", async (e) => {
   // Fix bit rates from files with NaN bitrate
   for (let audioBook of audioBooks) {
     if (isNaN(audioBook.bitrate)) {
-      console.log(audioBook);
-      audioBook.bitrate = ((audioBook.size / audioBook.duration)) * 8;
+      audioBook.bitrate = (audioBook.size / audioBook.duration) * 8;
     }
   }
 
@@ -137,6 +138,9 @@ fileInput.addEventListener("click", async (e) => {
   localStorage.setItem("audioBooks", JSON.stringify(audioBooks));
 
   root.append(ul);
+
+  loader.style.display = "none";
+
 
   // const title = document.createElement("h3");
   // title.textContent = input;

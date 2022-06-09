@@ -71,6 +71,8 @@ window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function
 fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
     root.replaceChildren();
     root.append((document.createElement("h1").textContent = "LOADING"));
+    const loader = document.querySelector(".lds-ring");
+    loader.style.display = "flex";
     const { files, input, audioBooks: scannedAudioBooks, } = yield window.electronAPI.openDir();
     audioBooks = scannedAudioBooks;
     const ul = document.createElement("ul");
@@ -96,13 +98,13 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     // Fix bit rates from files with NaN bitrate
     for (let audioBook of audioBooks) {
         if (isNaN(audioBook.bitrate)) {
-            console.log(audioBook);
-            audioBook.bitrate = ((audioBook.size / audioBook.duration)) * 8;
+            audioBook.bitrate = (audioBook.size / audioBook.duration) * 8;
         }
     }
     renderAudioBooks(audioBooks);
     localStorage.setItem("audioBooks", JSON.stringify(audioBooks));
     root.append(ul);
+    loader.style.display = "none";
     // const title = document.createElement("h3");
     // title.textContent = input;
     // root.append(title);

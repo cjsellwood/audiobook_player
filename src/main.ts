@@ -49,7 +49,7 @@ app.whenReady().then(() => {
       if (i.isDirectory()) {
         const subDir = await expandDirectory(path.resolve(dir, i.name));
         // console.log("subDir", subDir);
-        result.push({ folder: path.resolve(dir, i.name), children: subDir });
+        // result.push({ folder: path.resolve(dir, i.name), children: subDir });
       } else {
         result.push(path.resolve(dir, i.name));
         if (/(.mp3|.m4b|.m4a)$/.test(i.name)) {
@@ -109,8 +109,8 @@ app.whenReady().then(() => {
       return;
     } else {
       return {
-        input: input.filePaths[0],
-        files: list,
+        // input: input.filePaths[0],
+        // files: list,
         audioBooks: audioBooksData,
       };
     }
