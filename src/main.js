@@ -79,54 +79,48 @@ electron_1.app.whenReady().then(() => {
         }
         return result;
     });
+    const getMetadata = (file) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const metadata = yield mm.parseFile(file);
+            return metadata;
+        }
+        catch (error) {
+            console.error(error.message);
+            return error.message;
+        }
+    });
     function handleDirOpen() {
         return __awaiter(this, void 0, void 0, function* () {
             const input = yield electron_1.dialog.showOpenDialog(mainWindow, {
                 properties: ["openDirectory"],
             });
             const list = yield expandDirectory(input.filePaths[0]);
-            // console.log(list);
-            console.log(yield fs.stat(audioBooks[0]));
-            // jsmediatags.read(audioBooks[0], {
-            //   onSuccess: (tag) => {
-            //     console.log("jsmediatags", tag);
-            //   },
-            //   onError: (error) => {
-            //     console.log(error);
-            //   },
-            // });
-            // (async () => {
-            //   try {
-            //     const metadata = await mm.parseFile(audioBooks[0]);
-            //     console.log(
-            //       "MM",
-            //       util.inspect(metadata, { showHidden: false, depth: null })
-            //     );
-            //   } catch (error: any) {
-            //     console.error(error.message);
-            //   }
-            // })();
-            const getMetadata = (file) => __awaiter(this, void 0, void 0, function* () {
-                try {
-                    const metadata = yield mm.parseFile(file);
-                    return metadata;
-                }
-                catch (error) {
-                    console.error(error.message);
-                    return error.message;
-                }
-            });
             const audioBooksData = [];
+            yield fs.rm("images", { recursive: true, force: true });
+            yield fs.mkdir("images");
             for (let i = 0; i < audioBooks.length; i++) {
                 const metadata = yield getMetadata(audioBooks[i]);
+                const imageFile = `images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
+                yield fs.writeFile(imageFile, metadata.common.picture[0].data);
+                const stats = yield fs.stat(audioBooks[i]);
+                console.log(stats);
+                // if (!metadata.format.duration) {
+                //   console.log(
+                //     audioBooks[i],
+                //     util.inspect(metadata, { showHidden: false, depth: null })
+                //   );
+                //   console.log(await fs.stat(audioBooks[i]));
+                // }
                 audioBooksData.push({
+                    id: i,
                     path: audioBooks[i],
                     artist: metadata.common.artist,
                     year: metadata.common.year,
                     title: metadata.common.title,
                     bitrate: metadata.format.bitrate,
                     duration: metadata.format.duration,
-                    cover: metadata.common.picture[0],
+                    cover: path_1.default.resolve(imageFile),
+                    size: stats.size,
                 });
             }
             if (input.canceled) {

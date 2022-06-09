@@ -3,43 +3,34 @@ type RecursiveDir = {
   children: (RecursiveDir | string)[];
 };
 
-const fileInput = document.getElementById("folderPicker")! as HTMLButtonElement;
-const root = document.getElementById("root")! as HTMLDivElement;
+function secondsToHms(d: number) {
+  d = Number(d);
+  var h = Math.floor(d / 3600);
+  var m = Math.floor((d % 3600) / 60);
+  var s = Math.floor((d % 3600) % 60);
 
-fileInput.addEventListener("click", async (e) => {
-  root.append((document.createElement("h1").textContent = "LOADING"));
-  const { files, input, audioBooks } = await (
-    window as any
-  ).electronAPI.openDir();
-  // console.log(files, input);
+  var hDisplay = h > 0 ? h + ":" : "";
+  var mDisplay = m.toString().padStart(2, "0") + ":";
+  var sDisplay = s.toString().padStart(2, "0");
+  return hDisplay + mDisplay + sDisplay;
+}
 
+const renderAudioBooks = (audioBooks: any) => {
   root.replaceChildren();
 
   const ul = document.createElement("ul");
 
-  function secondsToHms(d: number) {
-    d = Number(d);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor((d % 3600) / 60);
-    var s = Math.floor((d % 3600) % 60);
-
-    var hDisplay = h > 0 ? h + ":" : "";
-    var mDisplay = m.toString().padStart(2, "0") + ":";
-    var sDisplay = s.toString().padStart(2, "0");
-    return hDisplay + mDisplay + sDisplay;
-  }
-
   for (let audioBook of audioBooks) {
     const li = document.createElement("li");
     li.style.display = "grid";
-    li.style.gridTemplateColumns = "repeat(7, 1fr)";
+    li.style.gridTemplateColumns = "2fr 2fr 2fr 1fr 2fr 1fr 1fr 1fr";
 
     const coverImg = document.createElement("img");
-    coverImg.src = URL.createObjectURL(
-      new Blob([audioBook.cover.data], { type: audioBook.cover.format })
-    );
+    coverImg.src = audioBook.cover;
     coverImg.style.width = "200px";
     coverImg.style.height = "200px";
+    coverImg.id = "img" + audioBook.id;
+
     li.append(coverImg);
 
     const titleP = document.createElement("p");
@@ -62,12 +53,80 @@ fileInput.addEventListener("click", async (e) => {
     durationP.textContent = secondsToHms(audioBook.duration);
     li.append(durationP);
 
+    const sizeP = document.createElement("p");
+    sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+    li.append(sizeP);
+
     const bitrateP = document.createElement("p");
     bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
     li.append(bitrateP);
 
     ul.append(li);
   }
+
+  root.append(ul);
+};
+
+const fileInput = document.getElementById("folderPicker")! as HTMLButtonElement;
+const root = document.getElementById("root")! as HTMLDivElement;
+
+let audioBooks = [];
+
+window.addEventListener("load", async () => {
+  const storedAudioBooks = localStorage.getItem("audioBooks");
+  if (!storedAudioBooks) {
+    return;
+  }
+
+  audioBooks = JSON.parse(storedAudioBooks);
+
+  renderAudioBooks(audioBooks);
+
+  // console.log(storedAudioBooks);
+});
+
+fileInput.addEventListener("click", async (e) => {
+  root.replaceChildren();
+  root.append((document.createElement("h1").textContent = "LOADING"));
+  const {
+    files,
+    input,
+    audioBooks: scannedAudioBooks,
+  } = await (window as any).electronAPI.openDir();
+
+  audioBooks = scannedAudioBooks;
+
+  const ul = document.createElement("ul");
+
+  // Add duration for files that don't have it in metadata
+  for (let audioBook of audioBooks) {
+    if (isNaN(audioBook.duration)) {
+      const audioContainer = document.getElementById(
+        "audioContainer"
+      )! as HTMLDivElement;
+      audioContainer.replaceChildren();
+      const audioPlayer = document.createElement("audio");
+      const source = document.createElement("source");
+
+      source.src = audioBook.path;
+
+      audioPlayer.append(source);
+      audioContainer.append(audioPlayer);
+
+      const durationPromise = new Promise((resolve): void => {
+        audioPlayer.addEventListener("loadedmetadata", () => {
+          audioBook.duration = audioPlayer.duration;
+          resolve(1);
+        });
+      });
+
+      await durationPromise;
+    }
+  }
+
+  renderAudioBooks(audioBooks);
+
+  localStorage.setItem("audioBooks", JSON.stringify(audioBooks));
 
   root.append(ul);
 
@@ -109,8 +168,6 @@ fileInput.addEventListener("click", async (e) => {
     }
     parentElement.append(elementList);
   };
-
-  console.log(audioBooks);
 
   addListItem(files, root, input);
 });

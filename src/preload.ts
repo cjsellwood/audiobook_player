@@ -1,8 +1,8 @@
-
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electronAPI", {
   openDir: () => ipcRenderer.invoke("dialog:openDir"),
+  getImage: (path: string) => ipcRenderer.invoke("getImage", path),
 });
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -16,6 +16,4 @@ window.addEventListener("DOMContentLoaded", async () => {
   for (const dependency of ["chrome", "node", "electron"]) {
     replaceText(`${dependency}-version`, process.versions[dependency]!);
   }
-
-  
 });

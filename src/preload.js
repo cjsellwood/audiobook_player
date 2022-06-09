@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 electron_1.contextBridge.exposeInMainWorld("electronAPI", {
     openDir: () => electron_1.ipcRenderer.invoke("dialog:openDir"),
+    getImage: (path) => electron_1.ipcRenderer.invoke("getImage", path),
 });
 window.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
     const replaceText = (selector, text) => {

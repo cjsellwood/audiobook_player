@@ -60,6 +60,16 @@ app.whenReady().then(() => {
     return result;
   };
 
+  const getMetadata = async (file: string) => {
+    try {
+      const metadata = await mm.parseFile(file);
+      return metadata;
+    } catch (error: any) {
+      console.error(error.message);
+      return error.message;
+    }
+  };
+
   async function handleDirOpen() {
     const input = await dialog.showOpenDialog(mainWindow, {
       properties: ["openDirectory"],
@@ -67,51 +77,40 @@ app.whenReady().then(() => {
 
     const list = await expandDirectory(input.filePaths[0]);
 
-    // console.log(list);
-    console.log(await fs.stat(audioBooks[0]));
-
-    // jsmediatags.read(audioBooks[0], {
-    //   onSuccess: (tag) => {
-    //     console.log("jsmediatags", tag);
-    //   },
-    //   onError: (error) => {
-    //     console.log(error);
-    //   },
-    // });
-
-    // (async () => {
-    //   try {
-    //     const metadata = await mm.parseFile(audioBooks[0]);
-    //     console.log(
-    //       "MM",
-    //       util.inspect(metadata, { showHidden: false, depth: null })
-    //     );
-    //   } catch (error: any) {
-    //     console.error(error.message);
-    //   }
-    // })();
-
-    const getMetadata = async (file: string) => {
-      try {
-        const metadata = await mm.parseFile(file);
-        return metadata;
-      } catch (error: any) {
-        console.error(error.message);
-        return error.message;
-      }
-    };
-
     const audioBooksData = [];
+
+    await fs.rm("images", { recursive: true, force: true });
+    await fs.mkdir("images");
+
     for (let i = 0; i < audioBooks.length; i++) {
       const metadata = await getMetadata(audioBooks[i]);
+      const imageFile = `images/img${i}${metadata.common.picture[0].format.replace(
+        "image/",
+        "."
+      )}`;
+      await fs.writeFile(imageFile, metadata.common.picture[0].data);
+
+      const stats = await fs.stat(audioBooks[i]);
+      console.log(stats);
+
+      // if (!metadata.format.duration) {
+      //   console.log(
+      //     audioBooks[i],
+      //     util.inspect(metadata, { showHidden: false, depth: null })
+      //   );
+      //   console.log(await fs.stat(audioBooks[i]));
+      // }
+
       audioBooksData.push({
+        id: i,
         path: audioBooks[i],
         artist: metadata.common.artist,
         year: metadata.common.year,
         title: metadata.common.title,
         bitrate: metadata.format.bitrate,
         duration: metadata.format.duration,
-        cover: metadata.common.picture[0],
+        cover: path.resolve(imageFile),
+        size: stats.size,
       });
     }
 
