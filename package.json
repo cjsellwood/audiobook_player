@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
-    "watch": "tsc --watch & nodemon --watch src --exec 'electron .'",
+    "watch": "tsc --watch & nodemon --watch src -e js,ts,html,css --exec 'electron .'",
     "start": "electron ."
   },
   "author": "",

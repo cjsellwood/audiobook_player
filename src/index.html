@@ -11,15 +11,21 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <button id="folderPicker">Choose Files</button>
     <div class="lds-ring">
       <div></div>
       <div></div>
       <div></div>
       <div></div>
     </div>
-    <div id="root"></div>
-    <div id="audioContainer"></div>
+    <main>
+      <section>
+        <div class="sidebar">
+          <button id="folderPicker">Choose Files</button>
+          <div id="audioContainer"></div>
+        </div>
+      </section>
+      <div id="root"></div>
+    </main>
     <script src="renderer.js"></script>
   </body>
 </html>

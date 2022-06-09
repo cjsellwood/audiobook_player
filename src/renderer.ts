@@ -19,21 +19,18 @@ const renderAudioBooks = (audioBooks: any) => {
   root.replaceChildren();
 
   const ul = document.createElement("ul");
+  ul.classList.add("book-grid");
 
   for (let audioBook of audioBooks) {
     const li = document.createElement("li");
-    li.style.display = "grid";
-    li.style.gridTemplateColumns = "2fr 2fr 2fr 1fr 2fr 1fr 1fr 1fr";
 
     const coverImg = document.createElement("img");
     coverImg.src = audioBook.cover;
-    coverImg.style.width = "200px";
-    coverImg.style.height = "200px";
     coverImg.id = "img" + audioBook.id;
 
     li.append(coverImg);
 
-    const titleP = document.createElement("p");
+    const titleP = document.createElement("h1");
     titleP.textContent = audioBook.title;
     li.append(titleP);
 
@@ -41,25 +38,25 @@ const renderAudioBooks = (audioBooks: any) => {
     artistP.textContent = audioBook.artist;
     li.append(artistP);
 
-    const yearP = document.createElement("p");
-    yearP.textContent = audioBook.year;
-    li.append(yearP);
+    // const yearP = document.createElement("p");
+    // yearP.textContent = audioBook.year;
+    // li.append(yearP);
 
-    const pathP = document.createElement("p");
-    pathP.textContent = audioBook.path;
-    li.append(pathP);
+    // const pathP = document.createElement("p");
+    // pathP.textContent = audioBook.path;
+    // li.append(pathP);
 
-    const durationP = document.createElement("p");
-    durationP.textContent = secondsToHms(audioBook.duration);
-    li.append(durationP);
+    // const durationP = document.createElement("p");
+    // durationP.textContent = secondsToHms(audioBook.duration);
+    // li.append(durationP);
 
-    const sizeP = document.createElement("p");
-    sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
-    li.append(sizeP);
+    // const sizeP = document.createElement("p");
+    // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+    // li.append(sizeP);
 
-    const bitrateP = document.createElement("p");
-    bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
-    li.append(bitrateP);
+    // const bitrateP = document.createElement("p");
+    // bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
+    // li.append(bitrateP);
 
     ul.append(li);
   }
@@ -140,7 +137,6 @@ fileInput.addEventListener("click", async (e) => {
   root.append(ul);
 
   loader.style.display = "none";
-
 
   // const title = document.createElement("h3");
   // title.textContent = input;

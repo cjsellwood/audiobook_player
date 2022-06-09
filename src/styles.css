@@ -1,9 +1,10 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
-#root {
+/* #root {
   border: none;
 }
 
@@ -15,15 +16,15 @@
 div {
   padding-left: 24px;
   border-left: 1px solid rgb(207, 207, 207);
-}
+} */
 
-h3 {
+/* h3 {
   margin: 8px 0;
 }
 
 p {
   padding: 4px 0;
-}
+} */
 
 #folderPicker {
   font-size: 1rem;
@@ -72,4 +73,73 @@ p {
   100% {
     transform: rotate(360deg);
   }
+}
+
+body {
+  background-color: rgb(242, 242, 242);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 250px);
+  justify-content: center;
+  place-items: center;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.book-grid li {
+  list-style: none;
+  color: rgb(0, 0, 0);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(180, 180, 180);
+}
+
+.book-grid img {
+  max-width: 250px;
+  max-height: 250px;
+  margin: 0 auto;
+}
+
+.book-grid h1 {
+  font-size: 14px;
+  padding: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.book-grid p {
+  padding-bottom: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
+section {
+  background-color: aqua;
+  position: relative;
+}
+
+.sidebar {
+  background-color: rgb(55, 55, 55);
+  position: fixed;
+  width: 300px;
+  height: 100vh;
+  left: 0;
+  top: 0;
 }
