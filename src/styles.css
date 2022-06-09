@@ -135,11 +135,36 @@ section {
   position: relative;
 }
 
-.sidebar {
-  background-color: rgb(55, 55, 55);
+#sidebar {
+  background-color: rgb(220, 221, 230);
   position: fixed;
   width: 300px;
   height: 100vh;
   left: 0;
   top: 0;
+}
+
+#sidebarBook {
+  height: 100%;
+}
+
+#sidebarBook img {
+  max-width: 300px;
+  max-height: 300px;
+}
+
+#sidebarBook progress {
+  cursor: pointer;
+  width: calc(100% - 8px);
+  padding: 8px;
+  margin: 4px;
+  background-color: rgb(165, 165, 165);
+}
+
+.plyr__volume {
+  display: none;
+}
+
+.plyr__menu {
+  display: none;
 }

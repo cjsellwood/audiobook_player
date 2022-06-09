@@ -9,11 +9,106 @@ function secondsToHms(d: number) {
   var m = Math.floor((d % 3600) / 60);
   var s = Math.floor((d % 3600) % 60);
 
-  var hDisplay = h > 0 ? h + ":" : "";
+  var hDisplay = h + ":";
   var mDisplay = m.toString().padStart(2, "0") + ":";
   var sDisplay = s.toString().padStart(2, "0");
   return hDisplay + mDisplay + sDisplay;
 }
+
+let audioBooks: any[] = [];
+let selected: number = -1;
+
+const renderSideBar = (audioBook: any) => {
+  if (audioBook.id === selected) {
+    return;
+  }
+  selected = audioBook.id;
+  const sideBarBook = document.getElementById("sidebarBook")! as HTMLDivElement;
+
+  sideBarBook.replaceChildren();
+
+  const coverImg = document.createElement("img");
+  coverImg.src = audioBook.cover;
+  coverImg.id = "img" + audioBook.id;
+  sideBarBook.append(coverImg);
+
+  // Add media player
+  const audioElement = document.createElement("audio");
+  audioElement.currentTime = audioBook.time || 0;
+  const sourceElement = document.createElement("source");
+  audioElement.id = "player";
+  sourceElement.src = audioBook.path;
+  audioElement.append(sourceElement);
+  sideBarBook.append(audioElement);
+
+  const timePlayed = document.createElement("p");
+  timePlayed.id = "timeChange" + audioBook.id;
+  timePlayed.textContent = secondsToHms(audioBook.time || 0);
+  sideBarBook.append(timePlayed);
+
+  // Audio buttons
+  let count = audioBook.time || 0;
+  let interval: NodeJS.Timer;
+  const playButton = document.createElement("button");
+  playButton.textContent = "play";
+  const index = audioBooks.findIndex((x) => audioBook.id === x.id);
+  playButton.addEventListener("click", () => {
+    audioElement.play();
+    interval = setInterval(() => {
+      const timePlayedChange = document.getElementById(
+        "timeChange" + audioBook.id
+      )! as HTMLParagraphElement;
+      if (!timePlayedChange) {
+        audioBooks[index].time = count - 3 > 0 ? count - 3 : 0;
+        localStorage.setItem("audioBooks", JSON.stringify(audioBooks));
+        timePlayed.textContent = secondsToHms(count - 3 > 0 ? count - 3 : 0);
+        clearInterval(interval);
+      } else {
+        count++;
+        timePlayed.textContent = secondsToHms(count);
+        audioBooks[index].time = count;
+        localStorage.setItem("audioBooks", JSON.stringify(audioBooks));
+      }
+    }, 1000);
+  });
+  sideBarBook.append(playButton);
+
+  const pauseButton = document.createElement("button");
+  pauseButton.textContent = "pause";
+  pauseButton.addEventListener("click", () => {
+    audioElement.pause();
+    clearInterval(interval);
+  });
+  sideBarBook.append(pauseButton);
+
+  const titleP = document.createElement("h1");
+  titleP.textContent = audioBook.title;
+  sideBarBook.append(titleP);
+
+  const artistP = document.createElement("p");
+  artistP.textContent = audioBook.artist;
+  sideBarBook.append(artistP);
+
+  const yearP = document.createElement("p");
+  yearP.textContent = audioBook.year;
+  sideBarBook.append(yearP);
+
+  const pathP = document.createElement("p");
+  pathP.textContent = audioBook.path;
+  sideBarBook.append(pathP);
+
+  const durationP = document.createElement("p");
+  durationP.textContent = secondsToHms(audioBook.duration);
+  sideBarBook.append(durationP);
+
+  const sizeP = document.createElement("p");
+  sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+  sideBarBook.append(sizeP);
+
+  const bitrateP = document.createElement("p");
+  bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
+  sideBarBook.append(bitrateP);
+};
 
 const renderAudioBooks = (audioBooks: any) => {
   root.replaceChildren();
@@ -27,6 +122,10 @@ const renderAudioBooks = (audioBooks: any) => {
     const coverImg = document.createElement("img");
     coverImg.src = audioBook.cover;
     coverImg.id = "img" + audioBook.id;
+
+    coverImg.addEventListener("click", () => {
+      renderSideBar(audioBook);
+    });
 
     li.append(coverImg);
 
@@ -66,8 +165,6 @@ const renderAudioBooks = (audioBooks: any) => {
 
 const fileInput = document.getElementById("folderPicker")! as HTMLButtonElement;
 const root = document.getElementById("root")! as HTMLDivElement;
-
-let audioBooks = [];
 
 window.addEventListener("load", async () => {
   const storedAudioBooks = localStorage.getItem("audioBooks");
