@@ -91,15 +91,6 @@ app.whenReady().then(() => {
       await fs.writeFile(imageFile, metadata.common.picture[0].data);
 
       const stats = await fs.stat(audioBooks[i]);
-      console.log(stats);
-
-      // if (!metadata.format.duration) {
-      //   console.log(
-      //     audioBooks[i],
-      //     util.inspect(metadata, { showHidden: false, depth: null })
-      //   );
-      //   console.log(await fs.stat(audioBooks[i]));
-      // }
 
       audioBooksData.push({
         id: i,

@@ -7,15 +7,11 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:"
     />
-    <title>Hello World!</title>
+    <title>Audiobooks</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>, Chromium
-    <span id="chrome-version"></span>, and Electron
-    <span id="electron-version"></span>.
-    <button id="folderPicker">Choose Files</button>
+    <button id="folderPicker" style="padding: 8px; font-size: 1rem;">Choose Files</button>
     <div id="root"></div>
     <div id="audioContainer"></div>
     <script src="renderer.js"></script>

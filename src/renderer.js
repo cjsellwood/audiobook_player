@@ -93,31 +93,48 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
             yield durationPromise;
         }
     }
+    // Fix bit rates from files with NaN bitrate
+    for (let audioBook of audioBooks) {
+        if (isNaN(audioBook.bitrate)) {
+            console.log(audioBook);
+            audioBook.bitrate = ((audioBook.size / audioBook.duration)) * 8;
+        }
+    }
     renderAudioBooks(audioBooks);
     localStorage.setItem("audioBooks", JSON.stringify(audioBooks));
     root.append(ul);
-    const title = document.createElement("h3");
-    title.textContent = input;
-    root.append(title);
-    const addListItem = (fileArray, parentElement, folderName) => {
-        const elementList = document.createElement("div");
-        const re = new RegExp(`${folderName.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")}/`, "g");
-        for (let i = 0; i < fileArray.length; i++) {
-            if (typeof fileArray[i] === "string") {
-                const fileElement = document.createElement("p");
-                fileElement.textContent =
-                    "📄 " + fileArray[i].replace(re, "");
-                elementList.append(fileElement);
-            }
-            else {
-                const folderP = document.createElement("p");
-                folderP.textContent =
-                    "📁 " + fileArray[i].folder.replace(re, "");
-                elementList.append(folderP);
-                addListItem(fileArray[i].children, elementList, fileArray[i].folder);
-            }
-        }
-        parentElement.append(elementList);
-    };
-    addListItem(files, root, input);
+    // const title = document.createElement("h3");
+    // title.textContent = input;
+    // root.append(title);
+    // const addListItem = (
+    //   fileArray: (RecursiveDir | string)[],
+    //   parentElement: HTMLDivElement,
+    //   folderName: string
+    // ) => {
+    //   const elementList = document.createElement("div");
+    //   const re = new RegExp(
+    //     `${folderName.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")}/`,
+    //     "g"
+    //   );
+    //   for (let i = 0; i < fileArray.length; i++) {
+    //     if (typeof fileArray[i] === "string") {
+    //       const fileElement = document.createElement("p");
+    //       fileElement.textContent =
+    //         "📄 " + (fileArray[i] as string).replace(re, "");
+    //       elementList.append(fileElement);
+    //     } else {
+    //       const folderP = document.createElement("p");
+    //       folderP.textContent =
+    //         "📁 " + (fileArray[i] as RecursiveDir).folder.replace(re, "");
+    //       elementList.append(folderP);
+    //       addListItem(
+    //         (fileArray[i] as RecursiveDir).children as (RecursiveDir | string)[],
+    //         elementList,
+    //         (fileArray[i] as RecursiveDir).folder
+    //       );
+    //     }
+    //   }
+    //   parentElement.append(elementList);
+    // };
+    // addListItem(files, root, input);
 }));

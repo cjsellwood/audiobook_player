@@ -103,14 +103,6 @@ electron_1.app.whenReady().then(() => {
                 const imageFile = `images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
                 yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 const stats = yield fs.stat(audioBooks[i]);
-                console.log(stats);
-                // if (!metadata.format.duration) {
-                //   console.log(
-                //     audioBooks[i],
-                //     util.inspect(metadata, { showHidden: false, depth: null })
-                //   );
-                //   console.log(await fs.stat(audioBooks[i]));
-                // }
                 audioBooksData.push({
                     id: i,
                     path: audioBooks[i],
