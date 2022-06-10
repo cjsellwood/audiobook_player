@@ -187,7 +187,6 @@ const renderSideBar = (audioBook) => {
     sideBarBook.append(sizeP);
 };
 const renderAudioBooks = (audioBooks) => {
-    console.log(audioBooks);
     root.replaceChildren();
     const ul = document.createElement("ul");
     ul.classList.add("book-grid");
@@ -244,11 +243,17 @@ window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function
 }));
 // Choose directory and load audiobooks from file
 fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
-    root.replaceChildren();
-    root.append((document.createElement("h1").textContent = "LOADING"));
     const loader = document.querySelector(".lds-ring");
     loader.style.display = "flex";
-    const { files, input, audioBooks: scannedAudioBooks, } = yield window.electronAPI.openDir();
+    root.style.overflow = "hidden";
+    root.style.height = "100vh";
+    const scannedAudioBooks = yield window.electronAPI.openDir();
+    root.style.height = "100%";
+    if (!scannedAudioBooks) {
+        loader.style.display = "none";
+        return;
+    }
+    root.replaceChildren();
     audioBooks = scannedAudioBooks;
     const ul = document.createElement("ul");
     // Add duration for files that don't have it in metadata

@@ -16,7 +16,6 @@ const createWindow = () => {
     width: 1480,
     height: 820,
     webPreferences: {
-      nodeIntegration: true,
       preload: path.join(__dirname, "preload.js"),
     },
     show: false,
@@ -34,23 +33,19 @@ app.whenReady().then(() => {
   const mainWindow = createWindow();
 
   let audioBooks: any[] = [];
+  console.log(audioBooks, "audiobooks");
 
   const expandDirectory = async (
     dir: string
   ): Promise<(RecursiveDir | string)[]> => {
-    // console.log(dir);
     const list = await fs.readdir(dir, {
       withFileTypes: true,
     });
 
-    // console.log(list);
     const result: (RecursiveDir | string)[] = [];
     for (let i of list) {
-      // console.log(path.resolve(dir, i.name), i.isDirectory());
       if (i.isDirectory()) {
-        const subDir = await expandDirectory(path.resolve(dir, i.name));
-        // console.log("subDir", subDir);
-        // result.push({ folder: path.resolve(dir, i.name), children: subDir });
+        await expandDirectory(path.resolve(dir, i.name));
       } else {
         result.push(path.resolve(dir, i.name));
         if (/(.mp3|.m4b|.m4a)$/.test(i.name)) {
@@ -72,49 +67,52 @@ app.whenReady().then(() => {
   };
 
   async function handleDirOpen() {
-    const input = await dialog.showOpenDialog(mainWindow, {
+    const input = await dialog.showOpenDialog({
       properties: ["openDirectory"],
     });
 
-    const list = await expandDirectory(input.filePaths[0]);
+    if (input.canceled) {
+      return;
+    }
+
+    await expandDirectory(input.filePaths[0]);
 
     const audioBooksData = [];
 
     await fs.rm("images", { recursive: true, force: true });
     await fs.mkdir("images");
 
+    console.log("AB", audioBooks);
+
     for (let i = 0; i < audioBooks.length; i++) {
       const metadata = await getMetadata(audioBooks[i]);
-      const imageFile = `images/img${i}${metadata.common.picture[0].format.replace(
-        "image/",
-        "."
-      )}`;
-      await fs.writeFile(imageFile, metadata.common.picture[0].data);
+      let imageFile = "images/default";
+      console.log(metadata.common);
+      if (metadata.common.picture) {
+        imageFile = `images/img${i}${metadata.common.picture[0].format.replace(
+          "image/",
+          "."
+        )}`;
+        await fs.writeFile(imageFile, metadata.common.picture[0].data);
+      }
 
       const stats = await fs.stat(audioBooks[i]);
+      console.log(metadata.common, metadata.format);
 
       audioBooksData.push({
         id: i,
         path: audioBooks[i],
-        artist: metadata.common.artist,
-        year: metadata.common.year,
-        title: metadata.common.title,
-        bitrate: metadata.format.bitrate,
-        duration: metadata.format.duration,
+        artist: metadata.common?.artist,
+        year: metadata.common?.year,
+        title: metadata.common?.title,
+        bitrate: metadata.format?.bitrate,
+        duration: metadata.format?.duration,
         cover: path.resolve(imageFile),
         size: stats.size,
       });
     }
 
-    if (input.canceled) {
-      return;
-    } else {
-      return {
-        // input: input.filePaths[0],
-        // files: list,
-        audioBooks: audioBooksData,
-      };
-    }
+    return audioBooksData;
   }
 
   ipcMain.handle("dialog:openDir", handleDirOpen);

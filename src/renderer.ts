@@ -206,7 +206,6 @@ const renderSideBar = (audioBook: any) => {
 };
 
 const renderAudioBooks = (audioBooks: any) => {
-  console.log(audioBooks);
   root.replaceChildren();
 
   const ul = document.createElement("ul");
@@ -283,15 +282,19 @@ window.addEventListener("load", async () => {
 
 // Choose directory and load audiobooks from file
 fileInput.addEventListener("click", async (e) => {
-  root.replaceChildren();
-  root.append((document.createElement("h1").textContent = "LOADING"));
   const loader = document.querySelector(".lds-ring")! as HTMLDivElement;
   loader.style.display = "flex";
-  const {
-    files,
-    input,
-    audioBooks: scannedAudioBooks,
-  } = await (window as any).electronAPI.openDir();
+  root.style.overflow = "hidden";
+  root.style.height = "100vh";
+  const scannedAudioBooks = await (window as any).electronAPI.openDir();
+
+  root.style.height = "100%"
+  if (!scannedAudioBooks) {
+    loader.style.display = "none";
+    return;
+  }
+
+  root.replaceChildren();
 
   audioBooks = scannedAudioBooks;
 

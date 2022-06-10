@@ -44,7 +44,6 @@ const createWindow = () => {
         width: 1480,
         height: 820,
         webPreferences: {
-            nodeIntegration: true,
             preload: path_1.default.join(__dirname, "preload.js"),
         },
         show: false,
@@ -57,19 +56,15 @@ const createWindow = () => {
 electron_1.app.whenReady().then(() => {
     const mainWindow = createWindow();
     let audioBooks = [];
+    console.log(audioBooks, "audiobooks");
     const expandDirectory = (dir) => __awaiter(void 0, void 0, void 0, function* () {
-        // console.log(dir);
         const list = yield fs.readdir(dir, {
             withFileTypes: true,
         });
-        // console.log(list);
         const result = [];
         for (let i of list) {
-            // console.log(path.resolve(dir, i.name), i.isDirectory());
             if (i.isDirectory()) {
-                const subDir = yield expandDirectory(path_1.default.resolve(dir, i.name));
-                // console.log("subDir", subDir);
-                // result.push({ folder: path.resolve(dir, i.name), children: subDir });
+                yield expandDirectory(path_1.default.resolve(dir, i.name));
             }
             else {
                 result.push(path_1.default.resolve(dir, i.name));
@@ -91,41 +86,42 @@ electron_1.app.whenReady().then(() => {
         }
     });
     function handleDirOpen() {
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
-            const input = yield electron_1.dialog.showOpenDialog(mainWindow, {
+            const input = yield electron_1.dialog.showOpenDialog({
                 properties: ["openDirectory"],
             });
-            const list = yield expandDirectory(input.filePaths[0]);
+            if (input.canceled) {
+                return;
+            }
+            yield expandDirectory(input.filePaths[0]);
             const audioBooksData = [];
             yield fs.rm("images", { recursive: true, force: true });
             yield fs.mkdir("images");
+            console.log("AB", audioBooks);
             for (let i = 0; i < audioBooks.length; i++) {
                 const metadata = yield getMetadata(audioBooks[i]);
-                const imageFile = `images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
-                yield fs.writeFile(imageFile, metadata.common.picture[0].data);
+                let imageFile = "images/default";
+                console.log(metadata.common);
+                if (metadata.common.picture) {
+                    imageFile = `images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
+                    yield fs.writeFile(imageFile, metadata.common.picture[0].data);
+                }
                 const stats = yield fs.stat(audioBooks[i]);
+                console.log(metadata.common, metadata.format);
                 audioBooksData.push({
                     id: i,
                     path: audioBooks[i],
-                    artist: metadata.common.artist,
-                    year: metadata.common.year,
-                    title: metadata.common.title,
-                    bitrate: metadata.format.bitrate,
-                    duration: metadata.format.duration,
+                    artist: (_a = metadata.common) === null || _a === void 0 ? void 0 : _a.artist,
+                    year: (_b = metadata.common) === null || _b === void 0 ? void 0 : _b.year,
+                    title: (_c = metadata.common) === null || _c === void 0 ? void 0 : _c.title,
+                    bitrate: (_d = metadata.format) === null || _d === void 0 ? void 0 : _d.bitrate,
+                    duration: (_e = metadata.format) === null || _e === void 0 ? void 0 : _e.duration,
                     cover: path_1.default.resolve(imageFile),
                     size: stats.size,
                 });
             }
-            if (input.canceled) {
-                return;
-            }
-            else {
-                return {
-                    // input: input.filePaths[0],
-                    // files: list,
-                    audioBooks: audioBooksData,
-                };
-            }
+            return audioBooksData;
         });
     }
     electron_1.ipcMain.handle("dialog:openDir", handleDirOpen);
