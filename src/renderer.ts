@@ -28,10 +28,14 @@ const renderSideBar = (audioBook: any) => {
 
   sideBarBook.replaceChildren();
 
+  const imageContainer = document.createElement("div");
+  imageContainer.id = "imageContainer";
+
   const coverImg = document.createElement("img");
   coverImg.src = audioBook.cover;
   coverImg.id = "img" + audioBook.id;
-  sideBarBook.append(coverImg);
+  imageContainer.append(coverImg);
+  sideBarBook.append(imageContainer);
 
   // Add media player
   const audioElement = document.createElement("audio");
@@ -76,16 +80,32 @@ const renderSideBar = (audioBook: any) => {
   playButton.id = "playButton";
   playButton.addEventListener("click", () => {
     if (!isPlaying) {
+      if (count >= audioBook.duration) {
+        count = 0;
+        audioElement.currentTime = 0;
+      }
       audioElement.play();
       isPlaying = true;
       playButton.textContent = "pause";
       interval = setInterval(() => {
         count++;
-        timePlayed.textContent = secondsToHms(count);
-        audioBooks[index].time = count;
-        seekBarInner.style.width = (count / audioBook.duration) * 288 + "px";
-        console.log(seekBarInner.style.width);
-        localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+        // If book finished
+        if (count > audioBook.duration) {
+          count = audioBook.duration;
+          timePlayed.textContent = secondsToHms(count);
+          audioBooks[index].time = count;
+          seekBarInner.style.width = (count / audioBook.duration) * 288 + "px";
+          localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+          clearInterval(interval);
+          audioElement.pause();
+          isPlaying = false;
+          playButton.textContent = "play";
+        } else {
+          timePlayed.textContent = secondsToHms(count);
+          audioBooks[index].time = count;
+          seekBarInner.style.width = (count / audioBook.duration) * 288 + "px";
+          localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+        }
       }, 1000);
     } else {
       isPlaying = false;
@@ -95,11 +115,70 @@ const renderSideBar = (audioBook: any) => {
     }
   });
 
-  const buttonsContainer = document.createElement("div");
-  sideBarBook.append(playButton);
+  const back1m = document.createElement("button");
+  back1m.textContent = "- 1m";
+  back1m.addEventListener("click", () => {
+    count = count - 60;
+    if (count < 0) {
+      count = 0;
+    }
+    audioElement.currentTime = count;
+    timePlayed.textContent = secondsToHms(count);
+    audioBooks[index].time = count;
+    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+  });
 
+  const back10s = document.createElement("button");
+  back10s.textContent = "- 10s";
+  back10s.addEventListener("click", () => {
+    count = count - 10;
+    if (count < 0) {
+      count = 0;
+    }
+    audioElement.currentTime = count;
+    timePlayed.textContent = secondsToHms(count);
+    audioBooks[index].time = count;
+    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+  });
+
+  const forward10s = document.createElement("button");
+  forward10s.textContent = "+ 10s";
+  forward10s.addEventListener("click", () => {
+    count = count + 10;
+    if (count > audioBook.duration) {
+      count = audioBook.duration;
+    }
+    audioElement.currentTime = count;
+    timePlayed.textContent = secondsToHms(count);
+    audioBooks[index].time = count;
+    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+  });
+
+  const forward1m = document.createElement("button");
+  forward1m.textContent = "+ 1m";
+  forward1m.addEventListener("click", () => {
+    count = count + 60;
+    if (count > audioBook.duration) {
+      count = audioBook.duration;
+    }
+    audioElement.currentTime = count;
+    timePlayed.textContent = secondsToHms(count);
+    audioBooks[index].time = count;
+    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+  });
+
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.id = "buttonsContainer";
+  buttonsContainer.append(back1m);
+  buttonsContainer.append(back10s);
+  buttonsContainer.append(playButton);
+  buttonsContainer.append(forward10s);
+  buttonsContainer.append(forward1m);
+
+  sideBarBook.append(buttonsContainer);
+
+  // Go to different time on seek bar
   seekBar.addEventListener("click", (e) => {
-    console.log(e);
     const clickLocation = e.x - 6;
     seekBarInner.style.width = 288 * (clickLocation / 288) + "px";
     count = audioBook.duration * (clickLocation / 288);
@@ -107,7 +186,6 @@ const renderSideBar = (audioBook: any) => {
     timePlayed.textContent = secondsToHms(count);
     audioBooks[index].time = count;
     localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
-    console.log(clickLocation);
   });
 
   const titleP = document.createElement("h1");
@@ -122,21 +200,9 @@ const renderSideBar = (audioBook: any) => {
   yearP.textContent = audioBook.year;
   sideBarBook.append(yearP);
 
-  const pathP = document.createElement("p");
-  pathP.textContent = audioBook.path;
-  sideBarBook.append(pathP);
-
-  const durationP = document.createElement("p");
-  durationP.textContent = secondsToHms(audioBook.duration);
-  sideBarBook.append(durationP);
-
   const sizeP = document.createElement("p");
   sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
   sideBarBook.append(sizeP);
-
-  const bitrateP = document.createElement("p");
-  bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
-  sideBarBook.append(bitrateP);
 };
 
 const renderAudioBooks = (audioBooks: any) => {

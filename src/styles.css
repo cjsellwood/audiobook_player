@@ -148,6 +148,12 @@ section {
   height: 100%;
 }
 
+#imageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #sidebarBook img {
   max-width: 300px;
   max-height: 300px;
@@ -159,14 +165,6 @@ section {
   padding: 8px;
   margin: 4px;
   background-color: rgb(165, 165, 165);
-}
-
-.plyr__volume {
-  display: none;
-}
-
-.plyr__menu {
-  display: none;
 }
 
 #seekBar {
@@ -189,7 +187,12 @@ section {
   font-size: 14px;
 }
 
-#playButton {
+#buttonsContainer {
+  display: flex;
+  justify-content: center;
+}
+
+#buttonsContainer > button {
   cursor: pointer;
   font-size: 16px;
   padding: 8px;
