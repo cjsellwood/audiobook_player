@@ -168,3 +168,29 @@ section {
 .plyr__menu {
   display: none;
 }
+
+#seekBar {
+  width: 288px;
+  height: 10px;
+  background-color: rgb(95, 95, 95);
+  margin: 6px;
+  cursor: pointer;
+}
+
+#seekBarInner {
+  height: 10px;
+  background-color: rgb(33, 85, 255);
+}
+
+#timeContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 4px;
+  font-size: 14px;
+}
+
+#playButton {
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px;
+}
