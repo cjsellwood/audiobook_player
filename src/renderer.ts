@@ -76,8 +76,12 @@ const renderSideBar = (audioBook: any) => {
   const playButton = document.createElement("button");
   const index = audioBooks.findIndex((x) => audioBook.id === x.id);
   let isPlaying = false;
-  playButton.textContent = "play";
   playButton.id = "playButton";
+
+  const playButtonImage = document.createElement("img");
+  playButtonImage.src = "play-fill.svg";
+  playButtonImage.id = "playImg";
+  playButton.append(playButtonImage);
   playButton.addEventListener("click", () => {
     if (!isPlaying) {
       if (count >= audioBook.duration) {
@@ -86,7 +90,7 @@ const renderSideBar = (audioBook: any) => {
       }
       audioElement.play();
       isPlaying = true;
-      playButton.textContent = "pause";
+      playButtonImage.src = "pause-fill.svg";
       interval = setInterval(() => {
         count++;
         // If book finished
@@ -109,14 +113,20 @@ const renderSideBar = (audioBook: any) => {
       }, 1000);
     } else {
       isPlaying = false;
-      playButton.textContent = "play";
+      playButtonImage.src = "play-fill.svg";
       audioElement.pause();
       clearInterval(interval);
     }
   });
 
   const back1m = document.createElement("button");
-  back1m.textContent = "- 1m";
+  const back1mImg = document.createElement("img");
+  back1mImg.src = "forward.svg";
+  back1mImg.style.transform = "rotate(180deg)";
+  back1m.append(back1mImg);
+  const back1mSpan = document.createElement("span");
+  back1mSpan.textContent = "1m";
+  back1m.append(back1mSpan);
   back1m.addEventListener("click", () => {
     count = count - 60;
     if (count < 0) {
@@ -129,7 +139,13 @@ const renderSideBar = (audioBook: any) => {
   });
 
   const back10s = document.createElement("button");
-  back10s.textContent = "- 10s";
+  const back10sImg = document.createElement("img");
+  back10sImg.src = "forward.svg";
+  back10sImg.style.transform = "rotate(180deg)";
+  back10s.append(back10sImg);
+  const back10sSpan = document.createElement("span");
+  back10sSpan.textContent = "10s";
+  back10s.append(back10sSpan);
   back10s.addEventListener("click", () => {
     count = count - 10;
     if (count < 0) {
@@ -142,7 +158,12 @@ const renderSideBar = (audioBook: any) => {
   });
 
   const forward10s = document.createElement("button");
-  forward10s.textContent = "+ 10s";
+  const forwardImg = document.createElement("img");
+  forwardImg.src = "forward.svg";
+  forward10s.append(forwardImg);
+  const forwardSpan = document.createElement("span");
+  forwardSpan.textContent = "10s";
+  forward10s.append(forwardSpan);
   forward10s.addEventListener("click", () => {
     count = count + 10;
     if (count > audioBook.duration) {
@@ -155,7 +176,12 @@ const renderSideBar = (audioBook: any) => {
   });
 
   const forward1m = document.createElement("button");
-  forward1m.textContent = "+ 1m";
+  const forward1mImg = document.createElement("img");
+  forward1mImg.src = "forward.svg";
+  forward1m.append(forward1mImg);
+  const forward1mSpan = document.createElement("span");
+  forward1mSpan.textContent = "1m";
+  forward1m.append(forward1mSpan);
   forward1m.addEventListener("click", () => {
     count = count + 60;
     if (count > audioBook.duration) {
@@ -288,7 +314,7 @@ fileInput.addEventListener("click", async (e) => {
   root.style.height = "100vh";
   const scannedAudioBooks = await (window as any).electronAPI.openDir();
 
-  root.style.height = "100%"
+  root.style.height = "100%";
   if (!scannedAudioBooks) {
     loader.style.display = "none";
     return;

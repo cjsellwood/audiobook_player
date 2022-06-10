@@ -197,4 +197,38 @@ section {
   cursor: pointer;
   font-size: 16px;
   padding: 8px;
+  border: none;
+  margin: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: transparent;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  min-width: 48px;
+}
+
+#buttonsContainer > button:hover {
+  background-color: rgb(187, 190, 197);
+}
+
+#buttonsContainer img {
+  width: 24px;
+  height: 24px;
+}
+
+#playButton img {
+  width: 48px;
+  height: 48px;
+}
+
+#buttonsContainer span {
+  display: block;
+  position: absolute;
+  bottom: 0;
 }
