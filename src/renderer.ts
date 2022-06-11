@@ -1,3 +1,5 @@
+// export {}
+
 type RecursiveDir = {
   folder: string;
   children: (RecursiveDir | string)[];
@@ -110,7 +112,6 @@ const renderSideBar = (audioBook: any) => {
   playButtonImage.id = "playImg";
   playButton.append(playButtonImage);
   playButton.addEventListener("click", () => {
-    console.log(audioElement);
     if (!isPlaying) {
       if (count >= audioBook.duration) {
         count = 0;

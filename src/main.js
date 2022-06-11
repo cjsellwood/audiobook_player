@@ -95,13 +95,17 @@ electron_1.app.whenReady().then(() => {
             }
             yield expandDirectory(input.filePaths[0]);
             const audioBooksData = [];
-            yield fs.rm("images", { recursive: true, force: true });
-            yield fs.mkdir("images");
+            console.log(electron_1.app.getPath("home"));
+            yield fs.rm(electron_1.app.getPath("home") + "/images", {
+                recursive: true,
+                force: true,
+            });
+            yield fs.mkdir(electron_1.app.getPath("home") + "/images");
             for (let i = 0; i < audioBooks.length; i++) {
                 const metadata = yield getMetadata(audioBooks[i]);
-                let imageFile = "images/default";
+                let imageFile = "/home/images/default.jpeg";
                 if (metadata.common.picture) {
-                    imageFile = `images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
+                    imageFile = `${electron_1.app.getPath("home")}/images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
                     yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 }
                 const stats = yield fs.stat(audioBooks[i]);

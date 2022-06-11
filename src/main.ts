@@ -1,9 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "path";
 import * as fs from "node:fs/promises";
-import jsmediatags from "jsmediatags";
 import * as mm from "music-metadata";
-import util from "util";
 
 // type RecursiveDir = (string | RecursiveDir)[];
 type RecursiveDir = {
@@ -77,15 +75,18 @@ app.whenReady().then(() => {
     await expandDirectory(input.filePaths[0]);
 
     const audioBooksData = [];
-
-    await fs.rm("images", { recursive: true, force: true });
-    await fs.mkdir("images");
+    
+    await fs.rm(app.getPath("home") + "/images", {
+      recursive: true,
+      force: true,
+    });
+    await fs.mkdir(app.getPath("home") + "/images");
 
     for (let i = 0; i < audioBooks.length; i++) {
       const metadata = await getMetadata(audioBooks[i]);
-      let imageFile = "images/default";
+      let imageFile = "/home/images/default.jpeg";
       if (metadata.common.picture) {
-        imageFile = `images/img${i}${metadata.common.picture[0].format.replace(
+        imageFile = `${app.getPath("home")}/images/img${i}${metadata.common.picture[0].format.replace(
           "image/",
           "."
         )}`;
