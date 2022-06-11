@@ -33,7 +33,6 @@ app.whenReady().then(() => {
   const mainWindow = createWindow();
 
   let audioBooks: any[] = [];
-  console.log(audioBooks, "audiobooks");
 
   const expandDirectory = async (
     dir: string
@@ -82,12 +81,9 @@ app.whenReady().then(() => {
     await fs.rm("images", { recursive: true, force: true });
     await fs.mkdir("images");
 
-    console.log("AB", audioBooks);
-
     for (let i = 0; i < audioBooks.length; i++) {
       const metadata = await getMetadata(audioBooks[i]);
       let imageFile = "images/default";
-      console.log(metadata.common);
       if (metadata.common.picture) {
         imageFile = `images/img${i}${metadata.common.picture[0].format.replace(
           "image/",
@@ -97,7 +93,6 @@ app.whenReady().then(() => {
       }
 
       const stats = await fs.stat(audioBooks[i]);
-      console.log(metadata.common, metadata.format);
 
       audioBooksData.push({
         id: i,

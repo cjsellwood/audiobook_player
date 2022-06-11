@@ -28,8 +28,22 @@ p {
 
 #folderPicker {
   font-size: 1rem;
-  padding: 8px;
-  margin: 8px;
+  padding: 8px 12px;
+  margin: 8px auto;
+  display: block;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border: 1px solid rgb(152, 152, 152);
+}
+
+#folderPicker:hover {
+  background-color: rgb(187, 190, 197);
 }
 
 .lds-ring {
@@ -106,6 +120,7 @@ body {
   max-width: 250px;
   max-height: 250px;
   margin: 0 auto;
+  background-color: black;
 }
 
 .book-grid h1 {
@@ -134,25 +149,45 @@ main {
 section {
   background-color: aqua;
   position: relative;
+  height: 100vh;
 }
 
 #sidebar {
   background-color: rgb(220, 221, 230);
   position: fixed;
   width: 300px;
-  height: 100vh;
+  height: 100%;
   left: 0;
   top: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 #sidebarBook {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+#sidebarDetails {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#sidebarBook h1 {
+  font-size: 20px;
+  text-align: center;
+  padding-bottom: 4px;
 }
 
 #imageContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgb(19, 19, 19);
 }
 
 #sidebarBook img {
@@ -191,6 +226,7 @@ section {
 #buttonsContainer {
   display: flex;
   justify-content: center;
+  padding-bottom: 8px;
 }
 
 #buttonsContainer > button {

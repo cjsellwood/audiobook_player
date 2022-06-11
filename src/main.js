@@ -56,7 +56,6 @@ const createWindow = () => {
 electron_1.app.whenReady().then(() => {
     const mainWindow = createWindow();
     let audioBooks = [];
-    console.log(audioBooks, "audiobooks");
     const expandDirectory = (dir) => __awaiter(void 0, void 0, void 0, function* () {
         const list = yield fs.readdir(dir, {
             withFileTypes: true,
@@ -98,17 +97,14 @@ electron_1.app.whenReady().then(() => {
             const audioBooksData = [];
             yield fs.rm("images", { recursive: true, force: true });
             yield fs.mkdir("images");
-            console.log("AB", audioBooks);
             for (let i = 0; i < audioBooks.length; i++) {
                 const metadata = yield getMetadata(audioBooks[i]);
                 let imageFile = "images/default";
-                console.log(metadata.common);
                 if (metadata.common.picture) {
                     imageFile = `images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
                     yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 }
                 const stats = yield fs.stat(audioBooks[i]);
-                console.log(metadata.common, metadata.format);
                 audioBooksData.push({
                     id: i,
                     path: audioBooks[i],

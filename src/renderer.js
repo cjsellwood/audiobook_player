@@ -28,6 +28,21 @@ const renderSideBar = (audioBook) => {
     selected = audioBook.id;
     const sideBarBook = document.getElementById("sidebarBook");
     sideBarBook.replaceChildren();
+    const sideBarDetails = document.createElement("div");
+    sideBarDetails.id = "sidebarDetails";
+    const titleP = document.createElement("h1");
+    titleP.textContent = audioBook.title;
+    sideBarDetails.append(titleP);
+    const artistP = document.createElement("p");
+    artistP.textContent = audioBook.artist;
+    sideBarDetails.append(artistP);
+    // const yearP = document.createElement("p");
+    // yearP.textContent = audioBook.year;
+    // sideBarDetails.append(yearP);
+    // const sizeP = document.createElement("p");
+    // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+    // sideBarDetails.append(sizeP);
+    sideBarBook.append(sideBarDetails);
     const imageContainer = document.createElement("div");
     imageContainer.id = "imageContainer";
     const coverImg = document.createElement("img");
@@ -43,6 +58,11 @@ const renderSideBar = (audioBook) => {
     sourceElement.src = audioBook.path;
     audioElement.append(sourceElement);
     sideBarBook.append(audioElement);
+    sourceElement.addEventListener("error", (e) => {
+        console.log(e);
+        sideBarBook.replaceChildren();
+        sideBarBook.append("File not found");
+    });
     // Seek bar
     const seekBar = document.createElement("div");
     seekBar.id = "seekBar";
@@ -73,6 +93,7 @@ const renderSideBar = (audioBook) => {
     playButtonImage.id = "playImg";
     playButton.append(playButtonImage);
     playButton.addEventListener("click", () => {
+        console.log(audioElement);
         if (!isPlaying) {
             if (count >= audioBook.duration) {
                 count = 0;
@@ -198,18 +219,6 @@ const renderSideBar = (audioBook) => {
         audioBooks[index].time = count;
         localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
     });
-    const titleP = document.createElement("h1");
-    titleP.textContent = audioBook.title;
-    sideBarBook.append(titleP);
-    const artistP = document.createElement("p");
-    artistP.textContent = audioBook.artist;
-    sideBarBook.append(artistP);
-    const yearP = document.createElement("p");
-    yearP.textContent = audioBook.year;
-    sideBarBook.append(yearP);
-    const sizeP = document.createElement("p");
-    sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
-    sideBarBook.append(sizeP);
 };
 const renderAudioBooks = (audioBooks) => {
     root.replaceChildren();
