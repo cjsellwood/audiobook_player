@@ -9,7 +9,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "make-windows": "electron-forge make --platform=win32 --arch=x64"
+    "make-windows": "npm run build && electron-forge make --platform=win32 --arch=x64"
   },
   "author": "cjsellwood",
   "license": "ISC",
@@ -31,7 +31,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "src/icon"
+        "icon": "src/images/icon"
       },
       "makers": [
         {

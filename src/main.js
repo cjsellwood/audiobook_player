@@ -39,8 +39,12 @@ const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
 const fs = __importStar(require("node:fs/promises"));
 const mm = __importStar(require("music-metadata"));
+const squirrel_1 = require("./squirrel");
+if ((0, squirrel_1.handleSquirrelEvent)(electron_1.app)) {
+    electron_1.app.quit();
+}
 const createWindow = () => {
-    const icon = electron_1.nativeImage.createFromPath(path_1.default.join(__dirname, "icon.png"));
+    const icon = electron_1.nativeImage.createFromPath(path_1.default.join(__dirname, "images/icon.png"));
     const win = new electron_1.BrowserWindow({
         width: 1600,
         height: 900,
@@ -50,7 +54,7 @@ const createWindow = () => {
         show: false,
         icon: icon,
     });
-    console.log(icon.isTemplateImage());
+    console.log(path_1.default.join(__dirname, "images/icon.png"), "HEY");
     win.loadFile("src/index.html");
     win.showInactive();
     // win.webContents.openDevTools();

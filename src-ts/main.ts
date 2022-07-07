@@ -2,6 +2,11 @@ import { app, BrowserWindow, dialog, ipcMain, nativeImage } from "electron";
 import path from "path";
 import * as fs from "node:fs/promises";
 import * as mm from "music-metadata";
+import { handleSquirrelEvent } from "./squirrel";
+
+if (handleSquirrelEvent(app)) {
+  app.quit();
+}
 
 // type RecursiveDir = (string | RecursiveDir)[];
 type RecursiveDir = {
@@ -10,7 +15,7 @@ type RecursiveDir = {
 };
 
 const createWindow = () => {
-  const icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
+  const icon = nativeImage.createFromPath(path.join(__dirname, "images/icon.png"));
   const win = new BrowserWindow({
     width: 1600,
     height: 900,
@@ -21,7 +26,7 @@ const createWindow = () => {
     icon: icon,
   });
 
-  console.log(icon.isTemplateImage());
+  console.log(path.join(__dirname, "images/icon.png"), "HEY");
 
   win.loadFile("src/index.html");
 

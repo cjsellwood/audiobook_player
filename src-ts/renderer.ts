@@ -106,7 +106,7 @@ const renderSideBar = (audioBook: any) => {
   playButton.id = "playButton";
 
   const playButtonImage = document.createElement("img");
-  playButtonImage.src = "play-fill.svg";
+  playButtonImage.src = "images/play-fill.svg";
   playButtonImage.id = "playImg";
   playButton.append(playButtonImage);
   playButton.addEventListener("click", () => {
@@ -117,7 +117,7 @@ const renderSideBar = (audioBook: any) => {
       }
       audioElement.play();
       isPlaying = true;
-      playButtonImage.src = "pause-fill.svg";
+      playButtonImage.src = "images/pause-fill.svg";
       interval = setInterval(() => {
         count++;
         // If book finished
@@ -140,7 +140,7 @@ const renderSideBar = (audioBook: any) => {
       }, 1000);
     } else {
       isPlaying = false;
-      playButtonImage.src = "play-fill.svg";
+      playButtonImage.src = "images/play-fill.svg";
       audioElement.pause();
       clearInterval(interval);
     }
@@ -148,7 +148,7 @@ const renderSideBar = (audioBook: any) => {
 
   const back1m = document.createElement("button");
   const back1mImg = document.createElement("img");
-  back1mImg.src = "forward.svg";
+  back1mImg.src = "images/forward.svg";
   back1mImg.style.transform = "rotate(180deg)";
   back1m.append(back1mImg);
   const back1mSpan = document.createElement("span");
@@ -167,7 +167,7 @@ const renderSideBar = (audioBook: any) => {
 
   const back10s = document.createElement("button");
   const back10sImg = document.createElement("img");
-  back10sImg.src = "forward.svg";
+  back10sImg.src = "images/forward.svg";
   back10sImg.style.transform = "rotate(180deg)";
   back10s.append(back10sImg);
   const back10sSpan = document.createElement("span");
@@ -186,7 +186,7 @@ const renderSideBar = (audioBook: any) => {
 
   const forward10s = document.createElement("button");
   const forwardImg = document.createElement("img");
-  forwardImg.src = "forward.svg";
+  forwardImg.src = "images/forward.svg";
   forward10s.append(forwardImg);
   const forwardSpan = document.createElement("span");
   forwardSpan.textContent = "10s";
@@ -204,7 +204,7 @@ const renderSideBar = (audioBook: any) => {
 
   const forward1m = document.createElement("button");
   const forward1mImg = document.createElement("img");
-  forward1mImg.src = "forward.svg";
+  forward1mImg.src = "images/forward.svg";
   forward1m.append(forward1mImg);
   const forward1mSpan = document.createElement("span");
   forward1mSpan.textContent = "1m";
