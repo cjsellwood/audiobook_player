@@ -1,3 +1,5 @@
+import { rmSync } from "node:fs";
+
 export function handleSquirrelEvent(app: any) {
   if (process.argv.length === 1) {
     return false;
@@ -46,6 +48,15 @@ export function handleSquirrelEvent(app: any) {
 
       // Remove desktop and start menu shortcuts
       spawnUpdate(["--removeShortcut", exeName]);
+
+      rmSync(app.getPath("home") + `\\AppData\\Local\\audiobook_player`, {
+        recursive: true,
+        force: true,
+      });
+      rmSync(app.getPath("home") + `\\AppData\\Roaming\\audiobook_player`, {
+        recursive: true,
+        force: true,
+      });
 
       setTimeout(app.quit, 1000);
       return true;

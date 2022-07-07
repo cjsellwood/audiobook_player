@@ -5,7 +5,8 @@ import * as mm from "music-metadata";
 import { handleSquirrelEvent } from "./squirrel";
 
 if (handleSquirrelEvent(app)) {
-  app.quit();
+  // @ts-ignore
+  return;
 }
 
 // type RecursiveDir = (string | RecursiveDir)[];
@@ -15,7 +16,9 @@ type RecursiveDir = {
 };
 
 const createWindow = () => {
-  const icon = nativeImage.createFromPath(path.join(__dirname, "images/icon.png"));
+  const icon = nativeImage.createFromPath(
+    path.join(__dirname, "images/icon.png")
+  );
   const win = new BrowserWindow({
     width: 1600,
     height: 900,
@@ -85,18 +88,18 @@ app.whenReady().then(() => {
 
     const audioBooksData = [];
 
-    await fs.rm(app.getPath("home") + "/images", {
+    await fs.rm(app.getPath("userData") + "/images", {
       recursive: true,
       force: true,
     });
-    await fs.mkdir(app.getPath("home") + "/images");
+    await fs.mkdir(app.getPath("userData") + "/images");
 
     for (let i = 0; i < audioBooks.length; i++) {
       const metadata = await getMetadata(audioBooks[i]);
-      let imageFile = "/home/images/default.jpeg";
+      let imageFile = app.getPath("userData") + "/images/default.jpeg";
       if (metadata.common.picture) {
         imageFile = `${app.getPath(
-          "home"
+          "userData"
         )}/images/img${i}${metadata.common.picture[0].format.replace(
           "image/",
           "."

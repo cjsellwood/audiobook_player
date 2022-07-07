@@ -41,7 +41,8 @@ const fs = __importStar(require("node:fs/promises"));
 const mm = __importStar(require("music-metadata"));
 const squirrel_1 = require("./squirrel");
 if ((0, squirrel_1.handleSquirrelEvent)(electron_1.app)) {
-    electron_1.app.quit();
+    // @ts-ignore
+    return;
 }
 const createWindow = () => {
     const icon = electron_1.nativeImage.createFromPath(path_1.default.join(__dirname, "images/icon.png"));
@@ -102,16 +103,16 @@ electron_1.app.whenReady().then(() => {
             }
             yield expandDirectory(input.filePaths[0]);
             const audioBooksData = [];
-            yield fs.rm(electron_1.app.getPath("home") + "/images", {
+            yield fs.rm(electron_1.app.getPath("userData") + "/images", {
                 recursive: true,
                 force: true,
             });
-            yield fs.mkdir(electron_1.app.getPath("home") + "/images");
+            yield fs.mkdir(electron_1.app.getPath("userData") + "/images");
             for (let i = 0; i < audioBooks.length; i++) {
                 const metadata = yield getMetadata(audioBooks[i]);
-                let imageFile = "/home/images/default.jpeg";
+                let imageFile = electron_1.app.getPath("userData") + "/images/default.jpeg";
                 if (metadata.common.picture) {
-                    imageFile = `${electron_1.app.getPath("home")}/images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
+                    imageFile = `${electron_1.app.getPath("userData")}/images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
                     yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 }
                 const stats = yield fs.stat(audioBooks[i]);

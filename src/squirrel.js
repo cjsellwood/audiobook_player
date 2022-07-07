@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleSquirrelEvent = void 0;
+const node_fs_1 = require("node:fs");
 function handleSquirrelEvent(app) {
     if (process.argv.length === 1) {
         return false;
@@ -39,6 +40,14 @@ function handleSquirrelEvent(app) {
             // --squirrel-updated handlers
             // Remove desktop and start menu shortcuts
             spawnUpdate(["--removeShortcut", exeName]);
+            (0, node_fs_1.rmSync)(app.getPath("home") + `\\AppData\\Local\\audiobook_player`, {
+                recursive: true,
+                force: true,
+            });
+            (0, node_fs_1.rmSync)(app.getPath("home") + `\\AppData\\Roaming\\audiobook_player`, {
+                recursive: true,
+                force: true,
+            });
             setTimeout(app.quit, 1000);
             return true;
         case "--squirrel-obsolete":
