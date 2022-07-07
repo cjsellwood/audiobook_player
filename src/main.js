@@ -40,14 +40,17 @@ const path_1 = __importDefault(require("path"));
 const fs = __importStar(require("node:fs/promises"));
 const mm = __importStar(require("music-metadata"));
 const createWindow = () => {
+    const icon = electron_1.nativeImage.createFromPath(path_1.default.join(__dirname, "icon.png"));
     const win = new electron_1.BrowserWindow({
-        width: 1480,
-        height: 820,
+        width: 1600,
+        height: 900,
         webPreferences: {
             preload: path_1.default.join(__dirname, "preload.js"),
         },
         show: false,
+        icon: icon,
     });
+    console.log(icon.isTemplateImage());
     win.loadFile("src/index.html");
     win.showInactive();
     // win.webContents.openDevTools();
@@ -95,7 +98,6 @@ electron_1.app.whenReady().then(() => {
             }
             yield expandDirectory(input.filePaths[0]);
             const audioBooksData = [];
-            console.log(electron_1.app.getPath("home"));
             yield fs.rm(electron_1.app.getPath("home") + "/images", {
                 recursive: true,
                 force: true,

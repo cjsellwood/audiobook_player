@@ -1,5 +1,3 @@
-// export {}
-
 type RecursiveDir = {
   folder: string;
   children: (RecursiveDir | string)[];

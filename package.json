@@ -1,7 +1,7 @@
 {
-  "name": "audiobooks",
+  "name": "audiobook_player",
   "version": "1.0.0",
-  "description": "audiobooks",
+  "description": "Audiobook Player",
   "main": "src/main.js",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
@@ -30,7 +30,9 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "src/icon"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel"

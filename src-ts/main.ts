@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, nativeImage } from "electron";
 import path from "path";
 import * as fs from "node:fs/promises";
 import * as mm from "music-metadata";
@@ -10,14 +10,18 @@ type RecursiveDir = {
 };
 
 const createWindow = () => {
+  const icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
   const win = new BrowserWindow({
-    width: 1480,
-    height: 820,
+    width: 1600,
+    height: 900,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
     show: false,
+    icon: icon,
   });
+
+  console.log(icon.isTemplateImage());
 
   win.loadFile("src/index.html");
 
@@ -75,7 +79,7 @@ app.whenReady().then(() => {
     await expandDirectory(input.filePaths[0]);
 
     const audioBooksData = [];
-    
+
     await fs.rm(app.getPath("home") + "/images", {
       recursive: true,
       force: true,
@@ -86,7 +90,9 @@ app.whenReady().then(() => {
       const metadata = await getMetadata(audioBooks[i]);
       let imageFile = "/home/images/default.jpeg";
       if (metadata.common.picture) {
-        imageFile = `${app.getPath("home")}/images/img${i}${metadata.common.picture[0].format.replace(
+        imageFile = `${app.getPath(
+          "home"
+        )}/images/img${i}${metadata.common.picture[0].format.replace(
           "image/",
           "."
         )}`;
