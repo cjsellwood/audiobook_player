@@ -300,13 +300,15 @@ const root = document.getElementById("root")! as HTMLDivElement;
 
 // Load and render previous saved audiobooks from local storage
 window.addEventListener("load", async () => {
-  const audioBooksLength = localStorage.getItem("abLength");
-  if (!audioBooksLength) {
+  const audioBooksList = localStorage.getItem("abList");
+  if (!audioBooksList) {
     return;
   }
 
-  for (let i = 0; i < +audioBooksLength; i++) {
-    const audioBook = localStorage.getItem(`ab${i}`);
+  for (let i = 0; i < JSON.parse(audioBooksList).length; i++) {
+    const audioBook = localStorage.getItem(
+      `ab_${JSON.parse(audioBooksList)[i]}`
+    );
     if (audioBook) {
       audioBooks.push(JSON.parse(audioBook));
     }
@@ -330,6 +332,17 @@ fileInput.addEventListener("click", async (e) => {
     loader.style.display = "none";
     return;
   }
+
+  // Remove previous audiobooks from local storage
+  let audioBooksList = localStorage.getItem("abList");
+  if (!audioBooksList) {
+    audioBooksList = "[]";
+  }
+
+  for (let i = 0; i < JSON.parse(audioBooksList).length; i++) {
+    localStorage.removeItem(`ab_${JSON.parse(audioBooksList)[i]}`);
+  }
+  localStorage.removeItem("abList");
 
   root.replaceChildren();
 
@@ -374,52 +387,14 @@ fileInput.addEventListener("click", async (e) => {
 
   // Store each individually
   for (let audioBook of audioBooks) {
-    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+    localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
   }
-  localStorage.setItem("abLength", audioBooks.length.toString());
+  localStorage.setItem(
+    "abList",
+    JSON.stringify(audioBooks.map((audiobook) => audiobook.id))
+  );
 
   root.append(ul);
 
   loader.style.display = "none";
-
-  // const title = document.createElement("h3");
-  // title.textContent = input;
-  // root.append(title);
-
-  // const addListItem = (
-  //   fileArray: (RecursiveDir | string)[],
-  //   parentElement: HTMLDivElement,
-  //   folderName: string
-  // ) => {
-  //   const elementList = document.createElement("div");
-  //   const re = new RegExp(
-  //     `${folderName.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")}/`,
-  //     "g"
-  //   );
-
-  //   for (let i = 0; i < fileArray.length; i++) {
-  //     if (typeof fileArray[i] === "string") {
-  //       const fileElement = document.createElement("p");
-  //       fileElement.textContent =
-  //         "📄 " + (fileArray[i] as string).replace(re, "");
-
-  //       elementList.append(fileElement);
-  //     } else {
-  //       const folderP = document.createElement("p");
-  //       folderP.textContent =
-  //         "📁 " + (fileArray[i] as RecursiveDir).folder.replace(re, "");
-
-  //       elementList.append(folderP);
-
-  //       addListItem(
-  //         (fileArray[i] as RecursiveDir).children as (RecursiveDir | string)[],
-  //         elementList,
-  //         (fileArray[i] as RecursiveDir).folder
-  //       );
-  //     }
-  //   }
-  //   parentElement.append(elementList);
-  // };
-
-  // addListItem(files, root, input);
 });

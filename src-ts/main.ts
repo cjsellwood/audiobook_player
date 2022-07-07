@@ -3,6 +3,7 @@ import path from "path";
 import * as fs from "node:fs/promises";
 import * as mm from "music-metadata";
 import { handleSquirrelEvent } from "./squirrel";
+import { v4 as uuidv4 } from "uuid";
 
 if (handleSquirrelEvent(app)) {
   // @ts-ignore
@@ -97,10 +98,11 @@ app.whenReady().then(() => {
     for (let i = 0; i < audioBooks.length; i++) {
       const metadata = await getMetadata(audioBooks[i]);
       let imageFile = app.getPath("userData") + "/images/default.jpeg";
+      const id = uuidv4();
       if (metadata.common.picture) {
         imageFile = `${app.getPath(
           "userData"
-        )}/images/img${i}${metadata.common.picture[0].format.replace(
+        )}/images/${id}${metadata.common.picture[0].format.replace(
           "image/",
           "."
         )}`;
@@ -110,7 +112,7 @@ app.whenReady().then(() => {
       const stats = await fs.stat(audioBooks[i]);
 
       audioBooksData.push({
-        id: i,
+        id: id,
         path: audioBooks[i],
         artist: metadata.common?.artist,
         year: metadata.common?.year,

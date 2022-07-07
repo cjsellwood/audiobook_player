@@ -40,6 +40,7 @@ const path_1 = __importDefault(require("path"));
 const fs = __importStar(require("node:fs/promises"));
 const mm = __importStar(require("music-metadata"));
 const squirrel_1 = require("./squirrel");
+const uuid_1 = require("uuid");
 if ((0, squirrel_1.handleSquirrelEvent)(electron_1.app)) {
     // @ts-ignore
     return;
@@ -111,13 +112,14 @@ electron_1.app.whenReady().then(() => {
             for (let i = 0; i < audioBooks.length; i++) {
                 const metadata = yield getMetadata(audioBooks[i]);
                 let imageFile = electron_1.app.getPath("userData") + "/images/default.jpeg";
+                const id = (0, uuid_1.v4)();
                 if (metadata.common.picture) {
-                    imageFile = `${electron_1.app.getPath("userData")}/images/img${i}${metadata.common.picture[0].format.replace("image/", ".")}`;
+                    imageFile = `${electron_1.app.getPath("userData")}/images/${id}${metadata.common.picture[0].format.replace("image/", ".")}`;
                     yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 }
                 const stats = yield fs.stat(audioBooks[i]);
                 audioBooksData.push({
-                    id: i,
+                    id: id,
                     path: audioBooks[i],
                     artist: (_a = metadata.common) === null || _a === void 0 ? void 0 : _a.artist,
                     year: (_b = metadata.common) === null || _b === void 0 ? void 0 : _b.year,
