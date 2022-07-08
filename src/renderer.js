@@ -296,7 +296,9 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     }
     localStorage.removeItem("abList");
     root.replaceChildren();
+    console.log("previous audiobooks", audioBooks);
     audioBooks = scannedAudioBooks;
+    console.log("scanned audiobooks", scannedAudioBooks);
     const ul = document.createElement("ul");
     // Add duration for files that don't have it in metadata
     for (let audioBook of audioBooks) {

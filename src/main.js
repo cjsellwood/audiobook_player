@@ -102,6 +102,8 @@ electron_1.app.whenReady().then(() => {
             if (input.canceled) {
                 return;
             }
+            audioBooks = [];
+            console.log(input);
             yield expandDirectory(input.filePaths[0]);
             const audioBooksData = [];
             yield fs.rm(electron_1.app.getPath("userData") + "/images", {
@@ -130,6 +132,7 @@ electron_1.app.whenReady().then(() => {
                     size: stats.size,
                 });
             }
+            console.log(audioBooksData);
             return audioBooksData;
         });
     }

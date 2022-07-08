@@ -346,7 +346,11 @@ fileInput.addEventListener("click", async (e) => {
 
   root.replaceChildren();
 
+  console.log("previous audiobooks", audioBooks);
+
   audioBooks = scannedAudioBooks;
+
+  console.log("scanned audiobooks", scannedAudioBooks);
 
   const ul = document.createElement("ul");
 
