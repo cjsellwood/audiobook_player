@@ -130,7 +130,7 @@ const renderSideBar = (audioBook: any) => {
           clearInterval(interval);
           audioElement.pause();
           isPlaying = false;
-          playButton.textContent = "play";
+          playButtonImage.src = "images/play-fill.svg";
         } else {
           timePlayed.textContent = secondsToHms(count);
           audioBooks[index].time = count;
