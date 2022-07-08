@@ -16,7 +16,7 @@ function secondsToHms(d: number) {
 }
 
 let audioBooks: any[] = [];
-let selected: number = -1;
+let selected: string = "";
 let interval: NodeJS.Timer;
 
 const renderSideBar = (audioBook: any) => {
@@ -24,6 +24,7 @@ const renderSideBar = (audioBook: any) => {
     return;
   }
   selected = audioBook.id;
+  localStorage.setItem("selected", selected);
   const sideBarBook = document.getElementById("sidebarBook")! as HTMLDivElement;
 
   sideBarBook.replaceChildren();
@@ -315,6 +316,14 @@ window.addEventListener("load", async () => {
   }
 
   renderAudioBooks(audioBooks);
+
+  // Load sidebar last selected from previous session
+  const selectedStored = localStorage.getItem("selected");
+  if (!selectedStored) {
+    return;
+  }
+
+  renderSideBar(audioBooks.find((x) => x.id === selectedStored));
 });
 
 // Choose directory and load audiobooks from file
@@ -332,7 +341,7 @@ fileInput.addEventListener("click", async (e) => {
   }
 
   // Clear sidebar
-  selected = -1;
+  selected = "";
   const sideBarBook = document.getElementById("sidebarBook")! as HTMLDivElement;
   sideBarBook.replaceChildren();
 
@@ -346,6 +355,7 @@ fileInput.addEventListener("click", async (e) => {
     localStorage.removeItem(`ab_${JSON.parse(audioBooksList)[i]}`);
   }
   localStorage.removeItem("abList");
+  localStorage.removeItem("selected");
 
   root.replaceChildren();
 

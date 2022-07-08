@@ -19,13 +19,14 @@ function secondsToHms(d) {
     return hDisplay + mDisplay + sDisplay;
 }
 let audioBooks = [];
-let selected = -1;
+let selected = "";
 let interval;
 const renderSideBar = (audioBook) => {
     if (audioBook.id === selected) {
         return;
     }
     selected = audioBook.id;
+    localStorage.setItem("selected", selected);
     const sideBarBook = document.getElementById("sidebarBook");
     sideBarBook.replaceChildren();
     const sideBarDetails = document.createElement("div");
@@ -272,6 +273,12 @@ window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function
         }
     }
     renderAudioBooks(audioBooks);
+    // Load sidebar last selected from previous session
+    const selectedStored = localStorage.getItem("selected");
+    if (!selectedStored) {
+        return;
+    }
+    renderSideBar(audioBooks.find((x) => x.id === selectedStored));
 }));
 // Choose directory and load audiobooks from file
 fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
@@ -286,7 +293,7 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
         return;
     }
     // Clear sidebar
-    selected = -1;
+    selected = "";
     const sideBarBook = document.getElementById("sidebarBook");
     sideBarBook.replaceChildren();
     // Remove previous audiobooks from local storage
@@ -298,6 +305,7 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
         localStorage.removeItem(`ab_${JSON.parse(audioBooksList)[i]}`);
     }
     localStorage.removeItem("abList");
+    localStorage.removeItem("selected");
     root.replaceChildren();
     const previousAudiobooks = audioBooks;
     audioBooks = scannedAudioBooks;

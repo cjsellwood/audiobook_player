@@ -101,7 +101,7 @@ body {
   justify-content: center;
   place-items: center;
   gap: 16px;
-  padding: 8px 0;
+  padding: 8px;
 }
 
 .book-grid li {
