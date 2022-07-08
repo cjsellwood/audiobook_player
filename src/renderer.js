@@ -109,7 +109,7 @@ const renderSideBar = (audioBook) => {
                     timePlayed.textContent = secondsToHms(count);
                     audioBooks[index].time = count;
                     seekBarInner.style.width = (count / audioBook.duration) * 288 + "px";
-                    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+                    localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
                     clearInterval(interval);
                     audioElement.pause();
                     isPlaying = false;
@@ -119,7 +119,7 @@ const renderSideBar = (audioBook) => {
                     timePlayed.textContent = secondsToHms(count);
                     audioBooks[index].time = count;
                     seekBarInner.style.width = (count / audioBook.duration) * 288 + "px";
-                    localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+                    localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
                 }
             }, 1000);
         }
@@ -146,7 +146,7 @@ const renderSideBar = (audioBook) => {
         audioElement.currentTime = count;
         timePlayed.textContent = secondsToHms(count);
         audioBooks[index].time = count;
-        localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+        localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
     });
     const back10s = document.createElement("button");
     const back10sImg = document.createElement("img");
@@ -164,7 +164,7 @@ const renderSideBar = (audioBook) => {
         audioElement.currentTime = count;
         timePlayed.textContent = secondsToHms(count);
         audioBooks[index].time = count;
-        localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+        localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
     });
     const forward10s = document.createElement("button");
     const forwardImg = document.createElement("img");
@@ -181,7 +181,7 @@ const renderSideBar = (audioBook) => {
         audioElement.currentTime = count;
         timePlayed.textContent = secondsToHms(count);
         audioBooks[index].time = count;
-        localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
+        localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
     });
     const forward1m = document.createElement("button");
     const forward1mImg = document.createElement("img");
@@ -272,7 +272,6 @@ window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function
         }
     }
     renderAudioBooks(audioBooks);
-    // console.log(storedAudioBooks);
 }));
 // Choose directory and load audiobooks from file
 fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
@@ -286,6 +285,10 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
         loader.style.display = "none";
         return;
     }
+    // Clear sidebar
+    selected = -1;
+    const sideBarBook = document.getElementById("sidebarBook");
+    sideBarBook.replaceChildren();
     // Remove previous audiobooks from local storage
     let audioBooksList = localStorage.getItem("abList");
     if (!audioBooksList) {
@@ -296,9 +299,18 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     }
     localStorage.removeItem("abList");
     root.replaceChildren();
-    console.log("previous audiobooks", audioBooks);
+    const previousAudiobooks = audioBooks;
     audioBooks = scannedAudioBooks;
-    console.log("scanned audiobooks", scannedAudioBooks);
+    // Get time and set if already in library before scanning
+    for (let audioBook of audioBooks) {
+        const old = previousAudiobooks.find((x) => x.title === audioBook.title && x.artist === audioBook.artist);
+        if (!old) {
+            continue;
+        }
+        if (old.time) {
+            audioBook.time = old.time;
+        }
+    }
     const ul = document.createElement("ul");
     // Add duration for files that don't have it in metadata
     for (let audioBook of audioBooks) {

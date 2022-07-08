@@ -86,7 +86,6 @@ app.whenReady().then(() => {
     }
 
     audioBooks = [];
-    console.log(input);
 
     await expandDirectory(input.filePaths[0]);
 
@@ -126,8 +125,6 @@ app.whenReady().then(() => {
         size: stats.size,
       });
     }
-
-    console.log(audioBooksData);
 
     return audioBooksData;
   }
