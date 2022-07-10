@@ -150,23 +150,23 @@ body {
 }
 
 .book-list {
-  margin: 8px;
+  margin: 12px;
   display: grid;
   gap: 1px;
 }
 
 .book-list li {
   display: grid;
-  grid-template-columns: 250px 250px 75px 75px 75px 75px 1fr;
+  grid-template-columns: 250px 250px 60px 50px 75px 75px 75px 1fr;
   align-items: center;
   gap: 1px;
   cursor: pointer;
 }
 
-.book-list li:hover p{
+.book-list li:hover p, .book-list li:hover button {
   background-color: rgb(240, 240, 240);
 }
-.book-list li:first-child:hover p{
+.book-list li:first-child:hover p {
   background-color: rgb(255, 255, 255);
 }
 
@@ -197,6 +197,16 @@ body {
   text-overflow: ellipsis;
   padding: 12px 8px;
   background-color: white;
+}
+
+.readButton {
+  border: none;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
 }
 
 main {

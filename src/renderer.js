@@ -254,6 +254,7 @@ const renderList = () => {
     top.innerHTML = `
   <p>Title</p>
   <p>Author</p>
+  <p>Read</p>
   <p>Year</p>
   <p>Length</p>
   <p>Size</p>
@@ -272,6 +273,14 @@ const renderList = () => {
         const artistP = document.createElement("p");
         artistP.textContent = audioBook.artist;
         li.append(artistP);
+        const readButton = document.createElement("button");
+        readButton.classList.add("readButton");
+        const readImg = document.createElement("img");
+        readImg.src = audioBook.read
+            ? "images/check-circle.svg"
+            : "images/x-circle.svg";
+        readButton.append(readImg);
+        li.append(readButton);
         const yearP = document.createElement("p");
         yearP.textContent = audioBook.year;
         li.append(yearP);
