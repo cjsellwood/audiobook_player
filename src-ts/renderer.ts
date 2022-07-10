@@ -69,9 +69,15 @@ const renderSideBar = (audioBook: any) => {
   sideBarBook.append(audioElement);
 
   sourceElement.addEventListener("error", (e) => {
-    console.log(e);
-    sideBarBook.replaceChildren();
-    sideBarBook.append("File not found");
+    document.getElementById("seekBar")?.remove();
+    document.getElementById("timeContainer")?.remove();
+    document.getElementById("buttonsContainer")?.remove();
+    const notFound = document.createElement("div");
+    notFound.id = "notFound";
+    const notFoundText = document.createElement("p");
+    notFoundText.textContent = "File not found";
+    notFound.append(notFoundText);
+    sideBarBook.append(notFound);
   });
 
   // Seek bar

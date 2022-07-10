@@ -60,9 +60,16 @@ const renderSideBar = (audioBook) => {
     audioElement.append(sourceElement);
     sideBarBook.append(audioElement);
     sourceElement.addEventListener("error", (e) => {
-        console.log(e);
-        sideBarBook.replaceChildren();
-        sideBarBook.append("File not found");
+        var _a, _b, _c;
+        (_a = document.getElementById("seekBar")) === null || _a === void 0 ? void 0 : _a.remove();
+        (_b = document.getElementById("timeContainer")) === null || _b === void 0 ? void 0 : _b.remove();
+        (_c = document.getElementById("buttonsContainer")) === null || _c === void 0 ? void 0 : _c.remove();
+        const notFound = document.createElement("div");
+        notFound.id = "notFound";
+        const notFoundText = document.createElement("p");
+        notFoundText.textContent = "File not found";
+        notFound.append(notFoundText);
+        sideBarBook.append(notFound);
     });
     // Seek bar
     const seekBar = document.createElement("div");
