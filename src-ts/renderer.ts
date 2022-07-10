@@ -18,6 +18,7 @@ function secondsToHms(d: number) {
 let audioBooks: any[] = [];
 let selected: string = "";
 let interval: NodeJS.Timer;
+let view: string = "grid";
 
 const renderSideBar = (audioBook: any) => {
   if (audioBook.id === selected) {
@@ -40,14 +41,6 @@ const renderSideBar = (audioBook: any) => {
   artistP.textContent = audioBook.artist;
   sideBarDetails.append(artistP);
 
-  // const yearP = document.createElement("p");
-  // yearP.textContent = audioBook.year;
-  // sideBarDetails.append(yearP);
-
-  // const sizeP = document.createElement("p");
-  // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
-  // sideBarDetails.append(sizeP);
-
   sideBarBook.append(sideBarDetails);
 
   const imageContainer = document.createElement("div");
@@ -68,6 +61,7 @@ const renderSideBar = (audioBook: any) => {
   audioElement.append(sourceElement);
   sideBarBook.append(audioElement);
 
+  // Show file not found
   sourceElement.addEventListener("error", (e) => {
     document.getElementById("seekBar")?.remove();
     document.getElementById("timeContainer")?.remove();
@@ -153,6 +147,7 @@ const renderSideBar = (audioBook: any) => {
     }
   });
 
+  // Audio control buttons
   const back1m = document.createElement("button");
   const back1mImg = document.createElement("img");
   back1mImg.src = "images/forward.svg";
@@ -249,9 +244,7 @@ const renderSideBar = (audioBook: any) => {
   });
 };
 
-const renderAudioBooks = (audioBooks: any) => {
-  root.replaceChildren();
-
+const renderGrid = () => {
   const ul = document.createElement("ul");
   ul.classList.add("book-grid");
 
@@ -299,14 +292,80 @@ const renderAudioBooks = (audioBooks: any) => {
     ul.append(li);
   }
 
+  return ul;
+};
+
+const renderList = () => {
+  const ul = document.createElement("ul");
+  ul.classList.add("book-list");
+
+  for (let audioBook of audioBooks) {
+    const li = document.createElement("li");
+
+    const coverImg = document.createElement("img");
+    coverImg.src = audioBook.cover;
+    coverImg.id = "img" + audioBook.id;
+
+    coverImg.addEventListener("click", () => {
+      renderSideBar(audioBook);
+    });
+
+    li.append(coverImg);
+
+    const titleP = document.createElement("h1");
+    titleP.textContent = audioBook.title;
+    li.append(titleP);
+
+    const artistP = document.createElement("p");
+    artistP.textContent = audioBook.artist;
+    li.append(artistP);
+
+    // const yearP = document.createElement("p");
+    // yearP.textContent = audioBook.year;
+    // li.append(yearP);
+
+    // const pathP = document.createElement("p");
+    // pathP.textContent = audioBook.path;
+    // li.append(pathP);
+
+    // const durationP = document.createElement("p");
+    // durationP.textContent = secondsToHms(audioBook.duration);
+    // li.append(durationP);
+
+    // const sizeP = document.createElement("p");
+    // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+    // li.append(sizeP);
+
+    // const bitrateP = document.createElement("p");
+    // bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
+    // li.append(bitrateP);
+
+    ul.append(li);
+  }
+  return ul;
+};
+
+const renderAudioBooks = () => {
+  root.replaceChildren();
+
+  let ul: HTMLUListElement;
+  if (view === "grid") {
+    ul = renderGrid();
+  } else {
+    ul = renderList();
+  }
+
   root.append(ul);
 };
 
-const fileInput = document.getElementById("folderPicker")! as HTMLButtonElement;
 const root = document.getElementById("root")! as HTMLDivElement;
 
-// Load and render previous saved audiobooks from local storage
+// Run upon load of window
 window.addEventListener("load", async () => {
+  // Load view style
+  view = localStorage.getItem("view") || view;
+
+  // Load and render previous saved audiobooks from local storage
   const audioBooksList = localStorage.getItem("abList");
   if (!audioBooksList) {
     return;
@@ -321,7 +380,7 @@ window.addEventListener("load", async () => {
     }
   }
 
-  renderAudioBooks(audioBooks);
+  renderAudioBooks();
 
   // Load sidebar last selected from previous session
   const selectedStored = localStorage.getItem("selected");
@@ -333,6 +392,7 @@ window.addEventListener("load", async () => {
 });
 
 // Choose directory and load audiobooks from file
+const fileInput = document.getElementById("folderPicker")! as HTMLButtonElement;
 fileInput.addEventListener("click", async (e) => {
   const loader = document.querySelector(".lds-ring")! as HTMLDivElement;
   loader.style.display = "flex";
@@ -417,7 +477,7 @@ fileInput.addEventListener("click", async (e) => {
     }
   }
 
-  renderAudioBooks(audioBooks);
+  renderAudioBooks();
 
   // Store each individually
   for (let audioBook of audioBooks) {
@@ -431,4 +491,18 @@ fileInput.addEventListener("click", async (e) => {
   root.append(ul);
 
   loader.style.display = "none";
+});
+
+// Change audiobook view
+const viewButton = document.getElementById("viewButton")! as HTMLButtonElement;
+viewButton.addEventListener("click", () => {
+  if (view === "grid") {
+    view = "list";
+  } else {
+    view = "grid";
+  }
+
+  localStorage.setItem("view", view);
+
+  renderAudioBooks();
 });

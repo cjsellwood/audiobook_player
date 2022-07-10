@@ -26,7 +26,7 @@ p {
   padding: 4px 0;
 } */
 
-#folderPicker {
+#folderPicker, #viewButton {
   font-size: 1rem;
   padding: 8px 12px;
   margin: 8px auto;
@@ -42,9 +42,10 @@ p {
   border: 1px solid rgb(152, 152, 152);
 }
 
-#folderPicker:hover {
-  background-color: rgb(187, 190, 197);
+#folderPicker:hover, #viewButton:hover {
+  background-color: rgb(196, 201, 211);
 }
+
 
 .lds-ring {
   display: none;

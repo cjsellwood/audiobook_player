@@ -21,6 +21,7 @@ function secondsToHms(d) {
 let audioBooks = [];
 let selected = "";
 let interval;
+let view = "grid";
 const renderSideBar = (audioBook) => {
     if (audioBook.id === selected) {
         return;
@@ -37,12 +38,6 @@ const renderSideBar = (audioBook) => {
     const artistP = document.createElement("p");
     artistP.textContent = audioBook.artist;
     sideBarDetails.append(artistP);
-    // const yearP = document.createElement("p");
-    // yearP.textContent = audioBook.year;
-    // sideBarDetails.append(yearP);
-    // const sizeP = document.createElement("p");
-    // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
-    // sideBarDetails.append(sizeP);
     sideBarBook.append(sideBarDetails);
     const imageContainer = document.createElement("div");
     imageContainer.id = "imageContainer";
@@ -59,6 +54,7 @@ const renderSideBar = (audioBook) => {
     sourceElement.src = audioBook.path;
     audioElement.append(sourceElement);
     sideBarBook.append(audioElement);
+    // Show file not found
     sourceElement.addEventListener("error", (e) => {
         var _a, _b, _c;
         (_a = document.getElementById("seekBar")) === null || _a === void 0 ? void 0 : _a.remove();
@@ -138,6 +134,7 @@ const renderSideBar = (audioBook) => {
             clearInterval(interval);
         }
     });
+    // Audio control buttons
     const back1m = document.createElement("button");
     const back1mImg = document.createElement("img");
     back1mImg.src = "images/forward.svg";
@@ -227,8 +224,7 @@ const renderSideBar = (audioBook) => {
         localStorage.setItem(`ab${audioBook.id}`, JSON.stringify(audioBook));
     });
 };
-const renderAudioBooks = (audioBooks) => {
-    root.replaceChildren();
+const renderGrid = () => {
     const ul = document.createElement("ul");
     ul.classList.add("book-grid");
     for (let audioBook of audioBooks) {
@@ -263,12 +259,62 @@ const renderAudioBooks = (audioBooks) => {
         // li.append(bitrateP);
         ul.append(li);
     }
+    return ul;
+};
+const renderList = () => {
+    const ul = document.createElement("ul");
+    ul.classList.add("book-list");
+    for (let audioBook of audioBooks) {
+        const li = document.createElement("li");
+        const coverImg = document.createElement("img");
+        coverImg.src = audioBook.cover;
+        coverImg.id = "img" + audioBook.id;
+        coverImg.addEventListener("click", () => {
+            renderSideBar(audioBook);
+        });
+        li.append(coverImg);
+        const titleP = document.createElement("h1");
+        titleP.textContent = audioBook.title;
+        li.append(titleP);
+        const artistP = document.createElement("p");
+        artistP.textContent = audioBook.artist;
+        li.append(artistP);
+        // const yearP = document.createElement("p");
+        // yearP.textContent = audioBook.year;
+        // li.append(yearP);
+        // const pathP = document.createElement("p");
+        // pathP.textContent = audioBook.path;
+        // li.append(pathP);
+        // const durationP = document.createElement("p");
+        // durationP.textContent = secondsToHms(audioBook.duration);
+        // li.append(durationP);
+        // const sizeP = document.createElement("p");
+        // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+        // li.append(sizeP);
+        // const bitrateP = document.createElement("p");
+        // bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
+        // li.append(bitrateP);
+        ul.append(li);
+    }
+    return ul;
+};
+const renderAudioBooks = () => {
+    root.replaceChildren();
+    let ul;
+    if (view === "grid") {
+        ul = renderGrid();
+    }
+    else {
+        ul = renderList();
+    }
     root.append(ul);
 };
-const fileInput = document.getElementById("folderPicker");
 const root = document.getElementById("root");
-// Load and render previous saved audiobooks from local storage
+// Run upon load of window
 window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function* () {
+    // Load view style
+    view = localStorage.getItem("view") || view;
+    // Load and render previous saved audiobooks from local storage
     const audioBooksList = localStorage.getItem("abList");
     if (!audioBooksList) {
         return;
@@ -279,7 +325,7 @@ window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function
             audioBooks.push(JSON.parse(audioBook));
         }
     }
-    renderAudioBooks(audioBooks);
+    renderAudioBooks();
     // Load sidebar last selected from previous session
     const selectedStored = localStorage.getItem("selected");
     if (!selectedStored) {
@@ -288,6 +334,7 @@ window.addEventListener("load", () => __awaiter(void 0, void 0, void 0, function
     renderSideBar(audioBooks.find((x) => x.id === selectedStored));
 }));
 // Choose directory and load audiobooks from file
+const fileInput = document.getElementById("folderPicker");
 fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, function* () {
     const loader = document.querySelector(".lds-ring");
     loader.style.display = "flex";
@@ -352,7 +399,7 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
             audioBook.bitrate = (audioBook.size / audioBook.duration) * 8;
         }
     }
-    renderAudioBooks(audioBooks);
+    renderAudioBooks();
     // Store each individually
     for (let audioBook of audioBooks) {
         localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
@@ -361,3 +408,15 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     root.append(ul);
     loader.style.display = "none";
 }));
+// Change audiobook view
+const viewButton = document.getElementById("viewButton");
+viewButton.addEventListener("click", () => {
+    if (view === "grid") {
+        view = "list";
+    }
+    else {
+        view = "grid";
+    }
+    localStorage.setItem("view", view);
+    renderAudioBooks();
+});
