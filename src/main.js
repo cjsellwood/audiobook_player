@@ -56,7 +56,6 @@ const createWindow = () => {
         show: false,
         icon: icon,
     });
-    console.log(path_1.default.join(__dirname, "images/icon.png"), "HEY");
     win.loadFile("src/index.html");
     win.showInactive();
     // win.webContents.openDevTools();
@@ -111,14 +110,18 @@ electron_1.app.whenReady().then(() => {
             });
             yield fs.mkdir(electron_1.app.getPath("userData") + "/images");
             for (let i = 0; i < audioBooks.length; i++) {
+                console.log(i, audioBooks[i]);
                 const metadata = yield getMetadata(audioBooks[i]);
+                console.log("got metadata");
                 let imageFile = electron_1.app.getPath("userData") + "/images/default.jpeg";
                 const id = (0, uuid_1.v4)();
                 if (metadata.common.picture) {
                     imageFile = `${electron_1.app.getPath("userData")}/images/${id}${metadata.common.picture[0].format.replace("image/", ".")}`;
                     yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 }
+                console.log("wrote image");
                 const stats = yield fs.stat(audioBooks[i]);
+                console.log("got stats");
                 audioBooksData.push({
                     id: id,
                     path: audioBooks[i],

@@ -30,8 +30,6 @@ const createWindow = () => {
     icon: icon,
   });
 
-  console.log(path.join(__dirname, "images/icon.png"), "HEY");
-
   win.loadFile("src/index.html");
 
   win.showInactive();
@@ -98,7 +96,9 @@ app.whenReady().then(() => {
     await fs.mkdir(app.getPath("userData") + "/images");
 
     for (let i = 0; i < audioBooks.length; i++) {
+      console.log(i, audioBooks[i]);
       const metadata = await getMetadata(audioBooks[i]);
+      console.log("got metadata");
       let imageFile = app.getPath("userData") + "/images/default.jpeg";
       const id = uuidv4();
       if (metadata.common.picture) {
@@ -110,8 +110,10 @@ app.whenReady().then(() => {
         )}`;
         await fs.writeFile(imageFile, metadata.common.picture[0].data);
       }
+      console.log("wrote image")
 
       const stats = await fs.stat(audioBooks[i]);
+      console.log("got stats")
 
       audioBooksData.push({
         id: id,

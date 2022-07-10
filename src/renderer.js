@@ -57,6 +57,7 @@ const renderSideBar = (audioBook) => {
     // Show file not found
     sourceElement.addEventListener("error", (e) => {
         var _a, _b, _c;
+        console.log(audioElement.error, e);
         (_a = document.getElementById("seekBar")) === null || _a === void 0 ? void 0 : _a.remove();
         (_b = document.getElementById("timeContainer")) === null || _b === void 0 ? void 0 : _b.remove();
         (_c = document.getElementById("buttonsContainer")) === null || _c === void 0 ? void 0 : _c.remove();
@@ -232,7 +233,7 @@ const renderGrid = () => {
         const coverImg = document.createElement("img");
         coverImg.src = audioBook.cover;
         coverImg.id = "img" + audioBook.id;
-        coverImg.addEventListener("click", () => {
+        li.addEventListener("click", () => {
             renderSideBar(audioBook);
         });
         li.append(coverImg);
@@ -242,21 +243,6 @@ const renderGrid = () => {
         const artistP = document.createElement("p");
         artistP.textContent = audioBook.artist;
         li.append(artistP);
-        // const yearP = document.createElement("p");
-        // yearP.textContent = audioBook.year;
-        // li.append(yearP);
-        // const pathP = document.createElement("p");
-        // pathP.textContent = audioBook.path;
-        // li.append(pathP);
-        // const durationP = document.createElement("p");
-        // durationP.textContent = secondsToHms(audioBook.duration);
-        // li.append(durationP);
-        // const sizeP = document.createElement("p");
-        // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
-        // li.append(sizeP);
-        // const bitrateP = document.createElement("p");
-        // bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
-        // li.append(bitrateP);
         ul.append(li);
     }
     return ul;
@@ -264,36 +250,44 @@ const renderGrid = () => {
 const renderList = () => {
     const ul = document.createElement("ul");
     ul.classList.add("book-list");
+    const top = document.createElement("li");
+    top.innerHTML = `
+  <p>Title</p>
+  <p>Author</p>
+  <p>Year</p>
+  <p>Length</p>
+  <p>Size</p>
+  <p>Bitrate</p>
+  <p>Path</p>`;
+    top.style.fontWeight = "bold";
+    ul.append(top);
     for (let audioBook of audioBooks) {
         const li = document.createElement("li");
-        const coverImg = document.createElement("img");
-        coverImg.src = audioBook.cover;
-        coverImg.id = "img" + audioBook.id;
-        coverImg.addEventListener("click", () => {
+        li.addEventListener("click", () => {
             renderSideBar(audioBook);
         });
-        li.append(coverImg);
-        const titleP = document.createElement("h1");
+        const titleP = document.createElement("p");
         titleP.textContent = audioBook.title;
         li.append(titleP);
         const artistP = document.createElement("p");
         artistP.textContent = audioBook.artist;
         li.append(artistP);
-        // const yearP = document.createElement("p");
-        // yearP.textContent = audioBook.year;
-        // li.append(yearP);
-        // const pathP = document.createElement("p");
-        // pathP.textContent = audioBook.path;
-        // li.append(pathP);
-        // const durationP = document.createElement("p");
-        // durationP.textContent = secondsToHms(audioBook.duration);
-        // li.append(durationP);
-        // const sizeP = document.createElement("p");
-        // sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
-        // li.append(sizeP);
-        // const bitrateP = document.createElement("p");
-        // bitrateP.textContent = Math.round(audioBook.bitrate / 1000).toString();
-        // li.append(bitrateP);
+        const yearP = document.createElement("p");
+        yearP.textContent = audioBook.year;
+        li.append(yearP);
+        const durationP = document.createElement("p");
+        durationP.textContent = secondsToHms(audioBook.duration);
+        li.append(durationP);
+        const sizeP = document.createElement("p");
+        sizeP.textContent = Math.round(audioBook.size / 1000000) + " MB";
+        li.append(sizeP);
+        const bitrateP = document.createElement("p");
+        bitrateP.textContent =
+            Math.round(audioBook.bitrate / 1000).toString() + " kbps";
+        li.append(bitrateP);
+        const pathP = document.createElement("p");
+        pathP.textContent = audioBook.path;
+        li.append(pathP);
         ul.append(li);
     }
     return ul;
@@ -376,7 +370,7 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     const ul = document.createElement("ul");
     // Add duration for files that don't have it in metadata
     for (let audioBook of audioBooks) {
-        if (isNaN(audioBook.duration)) {
+        if (isNaN(audioBook.duration) || audioBook.duration < 1000) {
             const audioContainer = document.getElementById("audioContainer");
             audioContainer.replaceChildren();
             const audioPlayer = document.createElement("audio");
@@ -395,7 +389,7 @@ fileInput.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, fun
     }
     // Fix bit rates from files with NaN bitrate
     for (let audioBook of audioBooks) {
-        if (isNaN(audioBook.bitrate)) {
+        if (isNaN(audioBook.bitrate) || audioBook.bitrate < 1000) {
             audioBook.bitrate = (audioBook.size / audioBook.duration) * 8;
         }
     }
