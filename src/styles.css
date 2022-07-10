@@ -209,6 +209,15 @@ body {
   cursor: pointer;
 }
 
+.readButton img {
+  width: 18px;
+  height: 18px;
+}
+
+.book-list .readButton:hover {
+  background-color: rgb(224, 224, 224);
+}
+
 main {
   display: grid;
   grid-template-columns: 300px 1fr;

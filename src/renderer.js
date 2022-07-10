@@ -114,6 +114,8 @@ const renderSideBar = (audioBook) => {
                     timePlayed.textContent = secondsToHms(count);
                     audioBooks[index].time = count;
                     seekBarInner.style.width = (count / audioBook.duration) * 288 + "px";
+                    audioBooks[index].read = true;
+                    renderAudioBooks();
                     localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
                     clearInterval(interval);
                     audioElement.pause();
@@ -281,6 +283,19 @@ const renderList = () => {
             : "images/x-circle.svg";
         readButton.append(readImg);
         li.append(readButton);
+        // Add event listener to change read status
+        readButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            console.log(e, audioBook);
+            if (audioBook.read) {
+                audioBook.read = false;
+            }
+            else {
+                audioBook.read = true;
+            }
+            localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
+            renderAudioBooks();
+        });
         const yearP = document.createElement("p");
         yearP.textContent = audioBook.year;
         li.append(yearP);
