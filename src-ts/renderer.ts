@@ -79,7 +79,6 @@ const renderSideBar = (audioBook: Audiobook) => {
 
   // Show file not found
   sourceElement.addEventListener("error", (e) => {
-    console.log(audioElement.error, e);
     document.getElementById("seekBar")?.remove();
     document.getElementById("timeContainer")?.remove();
     document.getElementById("buttonsContainer")?.remove();
@@ -381,7 +380,6 @@ const renderList = () => {
     // Add event listener to change read status
     readButton.addEventListener("click", (e) => {
       e.stopPropagation();
-      console.log(e, audioBook);
       if (audioBook.read) {
         audioBook.read = false;
       } else {
@@ -607,7 +605,6 @@ const changeSort = (newSort: string) => {
 
 const orderAudiobooks = () => {
   let sortFunction;
-  console.log(sort, order);
   switch (sort) {
     case "title":
       sortFunction = (a: Audiobook, b: Audiobook): number => {

@@ -59,7 +59,6 @@ const renderSideBar = (audioBook) => {
     // Show file not found
     sourceElement.addEventListener("error", (e) => {
         var _a, _b, _c;
-        console.log(audioElement.error, e);
         (_a = document.getElementById("seekBar")) === null || _a === void 0 ? void 0 : _a.remove();
         (_b = document.getElementById("timeContainer")) === null || _b === void 0 ? void 0 : _b.remove();
         (_c = document.getElementById("buttonsContainer")) === null || _c === void 0 ? void 0 : _c.remove();
@@ -328,7 +327,6 @@ const renderList = () => {
         // Add event listener to change read status
         readButton.addEventListener("click", (e) => {
             e.stopPropagation();
-            console.log(e, audioBook);
             if (audioBook.read) {
                 audioBook.read = false;
             }
@@ -505,7 +503,6 @@ const changeSort = (newSort) => {
 };
 const orderAudiobooks = () => {
     let sortFunction;
-    console.log(sort, order);
     switch (sort) {
         case "title":
             sortFunction = (a, b) => {
