@@ -109,8 +109,8 @@ electron_1.app.whenReady().then(() => {
                 force: true,
             });
             yield fs.mkdir(electron_1.app.getPath("userData") + "/images");
-            for (let i = 0; i < audioBooks.length; i++) {
-                console.log(i, audioBooks[i]);
+            for (let i = 0; i < audioBookPaths.length; i++) {
+                console.log(i, audioBookPaths[i]);
                 const metadata = yield getMetadata(audioBookPaths[i]);
                 console.log("got metadata");
                 let imageFile = electron_1.app.getPath("userData") + "/images/default.jpeg";

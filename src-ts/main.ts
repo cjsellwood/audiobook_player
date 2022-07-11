@@ -108,8 +108,8 @@ app.whenReady().then(() => {
     });
     await fs.mkdir(app.getPath("userData") + "/images");
 
-    for (let i = 0; i < audioBooks.length; i++) {
-      console.log(i, audioBooks[i]);
+    for (let i = 0; i < audioBookPaths.length; i++) {
+      console.log(i, audioBookPaths[i]);
       const metadata = await getMetadata(audioBookPaths[i]);
       console.log("got metadata");
       let imageFile = app.getPath("userData") + "/images/default.jpeg";
@@ -123,10 +123,10 @@ app.whenReady().then(() => {
         )}`;
         await fs.writeFile(imageFile, metadata.common.picture[0].data);
       }
-      console.log("wrote image")
+      console.log("wrote image");
 
       const stats = await fs.stat(audioBookPaths[i]);
-      console.log("got stats")
+      console.log("got stats");
 
       audioBooks.push({
         id: id,
@@ -140,7 +140,6 @@ app.whenReady().then(() => {
         size: stats.size,
       });
     }
-
     return audioBooks;
   }
 
