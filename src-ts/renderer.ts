@@ -3,6 +3,20 @@ type RecursiveDir = {
   children: (RecursiveDir | string)[];
 };
 
+type Audiobook = {
+  id: string;
+  title: string;
+  author: string;
+  path: string;
+  year: string;
+  bitrate: number;
+  duration: number;
+  cover: string;
+  size: number;
+  time?: number;
+  read?: boolean;
+};
+
 function secondsToHms(d: number) {
   d = Number(d);
   var h = Math.floor(d / 3600);
@@ -15,12 +29,14 @@ function secondsToHms(d: number) {
   return hDisplay + mDisplay + sDisplay;
 }
 
-let audioBooks: any[] = [];
+let audioBooks: Audiobook[] = [];
 let selected: string = "";
 let interval: NodeJS.Timer;
 let view: string = "grid";
+let sort: string = "path";
+let order: string = "asc";
 
-const renderSideBar = (audioBook: any) => {
+const renderSideBar = (audioBook: Audiobook) => {
   if (audioBook.id === selected) {
     return;
   }
@@ -37,9 +53,9 @@ const renderSideBar = (audioBook: any) => {
   titleP.textContent = audioBook.title;
   sideBarDetails.append(titleP);
 
-  const artistP = document.createElement("p");
-  artistP.textContent = audioBook.artist;
-  sideBarDetails.append(artistP);
+  const authorP = document.createElement("p");
+  authorP.textContent = audioBook.author;
+  sideBarDetails.append(authorP);
 
   sideBarBook.append(sideBarDetails);
 
@@ -268,9 +284,9 @@ const renderGrid = () => {
     titleP.textContent = audioBook.title;
     li.append(titleP);
 
-    const artistP = document.createElement("p");
-    artistP.textContent = audioBook.artist;
-    li.append(artistP);
+    const authorP = document.createElement("p");
+    authorP.textContent = audioBook.author;
+    li.append(authorP);
 
     ul.append(li);
   }
@@ -282,16 +298,57 @@ const renderList = () => {
   const ul = document.createElement("ul");
   ul.classList.add("book-list");
 
+  // Create table list header and add sort buttons
   const top = document.createElement("li");
-  top.innerHTML = `
-  <p>Title</p>
-  <p>Author</p>
-  <p>Read</p>
-  <p>Year</p>
-  <p>Length</p>
-  <p>Size</p>
-  <p>Bitrate</p>
-  <p>Path</p>`;
+  const topTitle = document.createElement("p");
+  topTitle.textContent = "Title";
+  topTitle.addEventListener("click", () => {
+    changeSort("title");
+  });
+  top.append(topTitle);
+  const topAuthor = document.createElement("p");
+  topAuthor.textContent = "Author";
+  topAuthor.addEventListener("click", () => {
+    changeSort("author");
+  });
+  top.append(topAuthor);
+  const topRead = document.createElement("p");
+  topRead.textContent = "Read";
+  topRead.addEventListener("click", () => {
+    changeSort("read");
+  });
+  top.append(topRead);
+  const topYear = document.createElement("p");
+  topYear.textContent = "Year";
+  topYear.addEventListener("click", () => {
+    changeSort("year");
+  });
+  top.append(topYear);
+  const topLength = document.createElement("p");
+  topLength.textContent = "Length";
+  topLength.addEventListener("click", () => {
+    changeSort("length");
+  });
+  top.append(topLength);
+  const topSize = document.createElement("p");
+  topSize.textContent = "Size";
+  topSize.addEventListener("click", () => {
+    changeSort("size");
+  });
+  top.append(topSize);
+  const topBitrate = document.createElement("p");
+  topBitrate.textContent = "Bitrate";
+  topBitrate.addEventListener("click", () => {
+    changeSort("bitrate");
+  });
+  top.append(topBitrate);
+  const topPath = document.createElement("p");
+  topPath.textContent = "Path";
+  topPath.addEventListener("click", () => {
+    changeSort("path");
+  });
+  top.append(topPath);
+
   top.style.fontWeight = "bold";
 
   ul.append(top);
@@ -307,9 +364,9 @@ const renderList = () => {
     titleP.textContent = audioBook.title;
     li.append(titleP);
 
-    const artistP = document.createElement("p");
-    artistP.textContent = audioBook.artist;
-    li.append(artistP);
+    const authorP = document.createElement("p");
+    authorP.textContent = audioBook.author;
+    li.append(authorP);
 
     const readButton = document.createElement("button");
     readButton.classList.add("readButton");
@@ -378,8 +435,10 @@ const root = document.getElementById("root")! as HTMLDivElement;
 
 // Run upon load of window
 window.addEventListener("load", async () => {
-  // Load view style
+  // Load view and sort
   view = localStorage.getItem("view") || view;
+  sort = localStorage.getItem("sort") || sort;
+  order = localStorage.getItem("order") || order;
 
   // Load and render previous saved audiobooks from local storage
   const audioBooksList = localStorage.getItem("abList");
@@ -396,6 +455,7 @@ window.addEventListener("load", async () => {
     }
   }
 
+  orderAudiobooks();
   renderAudioBooks();
 
   // Load sidebar last selected from previous session
@@ -404,7 +464,10 @@ window.addEventListener("load", async () => {
     return;
   }
 
-  renderSideBar(audioBooks.find((x) => x.id === selectedStored));
+  const sideBarSelected = audioBooks.find((x) => x.id === selectedStored);
+  if (sideBarSelected) {
+    renderSideBar(sideBarSelected);
+  }
 });
 
 // Choose directory and load audiobooks from file
@@ -448,13 +511,16 @@ fileInput.addEventListener("click", async (e) => {
   // Get time and set if already in library before scanning
   for (let audioBook of audioBooks) {
     const old = previousAudiobooks.find(
-      (x) => x.title === audioBook.title && x.artist === audioBook.artist
+      (x) => x.title === audioBook.title && x.author === audioBook.author
     );
     if (!old) {
       continue;
     }
     if (old.time) {
       audioBook.time = old.time;
+    }
+    if (old.read) {
+      audioBook.read = old.read;
     }
   }
 
@@ -522,3 +588,105 @@ viewButton.addEventListener("click", () => {
 
   renderAudioBooks();
 });
+
+// Change audiobook sort
+const changeSort = (newSort: string) => {
+  if (sort === newSort) {
+    order = order === "asc" ? "desc" : "asc";
+  } else {
+    order = "asc";
+  }
+  sort = newSort;
+  localStorage.setItem("sort", sort);
+  localStorage.setItem("order", order);
+
+  orderAudiobooks();
+
+  renderAudioBooks();
+};
+
+const orderAudiobooks = () => {
+  let sortFunction;
+  console.log(sort, order);
+  switch (sort) {
+    case "title":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.title > b.title) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "author":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.author > b.author) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "read":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if ((a.read || false) <= (b.read || false)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "year":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.year > b.year) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "length":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.duration > b.duration) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "size":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.size > b.size) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "bitrate":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.bitrate > b.bitrate) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    case "path":
+      sortFunction = (a: Audiobook, b: Audiobook): number => {
+        if (a.path > b.path) {
+          return 1;
+        } else {
+          return -1;
+        }
+      };
+      break;
+    default:
+      break;
+  }
+
+  audioBooks.sort(sortFunction);
+  if (order === "desc") {
+    audioBooks.reverse();
+  }
+};

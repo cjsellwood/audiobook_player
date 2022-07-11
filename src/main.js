@@ -63,7 +63,7 @@ const createWindow = () => {
 };
 electron_1.app.whenReady().then(() => {
     const mainWindow = createWindow();
-    let audioBooks = [];
+    let audioBookPaths = [];
     const expandDirectory = (dir) => __awaiter(void 0, void 0, void 0, function* () {
         const list = yield fs.readdir(dir, {
             withFileTypes: true,
@@ -76,7 +76,7 @@ electron_1.app.whenReady().then(() => {
             else {
                 result.push(path_1.default.resolve(dir, i.name));
                 if (/(.mp3|.m4b|.m4a)$/.test(i.name)) {
-                    audioBooks.push(path_1.default.resolve(dir, i.name));
+                    audioBookPaths.push(path_1.default.resolve(dir, i.name));
                 }
             }
         }
@@ -101,9 +101,9 @@ electron_1.app.whenReady().then(() => {
             if (input.canceled) {
                 return;
             }
-            audioBooks = [];
+            audioBookPaths = [];
             yield expandDirectory(input.filePaths[0]);
-            const audioBooksData = [];
+            const audioBooks = [];
             yield fs.rm(electron_1.app.getPath("userData") + "/images", {
                 recursive: true,
                 force: true,
@@ -111,7 +111,7 @@ electron_1.app.whenReady().then(() => {
             yield fs.mkdir(electron_1.app.getPath("userData") + "/images");
             for (let i = 0; i < audioBooks.length; i++) {
                 console.log(i, audioBooks[i]);
-                const metadata = yield getMetadata(audioBooks[i]);
+                const metadata = yield getMetadata(audioBookPaths[i]);
                 console.log("got metadata");
                 let imageFile = electron_1.app.getPath("userData") + "/images/default.jpeg";
                 const id = (0, uuid_1.v4)();
@@ -120,12 +120,12 @@ electron_1.app.whenReady().then(() => {
                     yield fs.writeFile(imageFile, metadata.common.picture[0].data);
                 }
                 console.log("wrote image");
-                const stats = yield fs.stat(audioBooks[i]);
+                const stats = yield fs.stat(audioBookPaths[i]);
                 console.log("got stats");
-                audioBooksData.push({
+                audioBooks.push({
                     id: id,
-                    path: audioBooks[i],
-                    artist: (_a = metadata.common) === null || _a === void 0 ? void 0 : _a.artist,
+                    path: audioBookPaths[i],
+                    author: (_a = metadata.common) === null || _a === void 0 ? void 0 : _a.artist,
                     year: (_b = metadata.common) === null || _b === void 0 ? void 0 : _b.year,
                     title: (_c = metadata.common) === null || _c === void 0 ? void 0 : _c.title,
                     bitrate: (_d = metadata.format) === null || _d === void 0 ? void 0 : _d.bitrate,
@@ -134,7 +134,7 @@ electron_1.app.whenReady().then(() => {
                     size: stats.size,
                 });
             }
-            return audioBooksData;
+            return audioBooks;
         });
     }
     electron_1.ipcMain.handle("dialog:openDir", handleDirOpen);

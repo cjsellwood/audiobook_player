@@ -10,10 +10,23 @@ if (handleSquirrelEvent(app)) {
   return;
 }
 
-// type RecursiveDir = (string | RecursiveDir)[];
 type RecursiveDir = {
   folder: string;
   children: (RecursiveDir | string)[];
+};
+
+type Audiobook = {
+  id: string;
+  title: string;
+  author: string;
+  path: string;
+  year: string;
+  bitrate: number;
+  duration: number;
+  cover: string;
+  size: number;
+  time?: number;
+  read?: boolean;
 };
 
 const createWindow = () => {
@@ -41,7 +54,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
   const mainWindow = createWindow();
 
-  let audioBooks: any[] = [];
+  let audioBookPaths: string[] = [];
 
   const expandDirectory = async (
     dir: string
@@ -57,7 +70,7 @@ app.whenReady().then(() => {
       } else {
         result.push(path.resolve(dir, i.name));
         if (/(.mp3|.m4b|.m4a)$/.test(i.name)) {
-          audioBooks.push(path.resolve(dir, i.name));
+          audioBookPaths.push(path.resolve(dir, i.name));
         }
       }
     }
@@ -83,11 +96,11 @@ app.whenReady().then(() => {
       return;
     }
 
-    audioBooks = [];
+    audioBookPaths = [];
 
     await expandDirectory(input.filePaths[0]);
 
-    const audioBooksData = [];
+    const audioBooks: Audiobook[] = [];
 
     await fs.rm(app.getPath("userData") + "/images", {
       recursive: true,
@@ -97,7 +110,7 @@ app.whenReady().then(() => {
 
     for (let i = 0; i < audioBooks.length; i++) {
       console.log(i, audioBooks[i]);
-      const metadata = await getMetadata(audioBooks[i]);
+      const metadata = await getMetadata(audioBookPaths[i]);
       console.log("got metadata");
       let imageFile = app.getPath("userData") + "/images/default.jpeg";
       const id = uuidv4();
@@ -112,13 +125,13 @@ app.whenReady().then(() => {
       }
       console.log("wrote image")
 
-      const stats = await fs.stat(audioBooks[i]);
+      const stats = await fs.stat(audioBookPaths[i]);
       console.log("got stats")
 
-      audioBooksData.push({
+      audioBooks.push({
         id: id,
-        path: audioBooks[i],
-        artist: metadata.common?.artist,
+        path: audioBookPaths[i],
+        author: metadata.common?.artist,
         year: metadata.common?.year,
         title: metadata.common?.title,
         bitrate: metadata.format?.bitrate,
@@ -128,7 +141,7 @@ app.whenReady().then(() => {
       });
     }
 
-    return audioBooksData;
+    return audioBooks;
   }
 
   ipcMain.handle("dialog:openDir", handleDirOpen);
