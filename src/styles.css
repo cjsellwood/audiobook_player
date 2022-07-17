@@ -80,6 +80,11 @@
   }
 }
 
+.lds-ring p {
+  color: rgb(79, 182, 233);
+  font-size: 18px;
+}
+
 body {
   background-color: var(--main-background);
   font-family: Arial, Helvetica, sans-serif;

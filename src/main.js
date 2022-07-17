@@ -110,6 +110,8 @@ electron_1.app.whenReady().then(() => {
             });
             yield fs.mkdir(electron_1.app.getPath("userData") + "/images");
             for (let i = 0; i < audioBookPaths.length; i++) {
+                // Send loading status to UI
+                mainWindow.webContents.send("update-counter", `${i + 1} / ${audioBookPaths.length}`);
                 console.log(i, audioBookPaths[i]);
                 const metadata = yield getMetadata(audioBookPaths[i]);
                 console.log("got metadata");

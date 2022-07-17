@@ -687,3 +687,9 @@ const orderAudiobooks = () => {
     audioBooks.reverse();
   }
 };
+
+// Loading count
+const counter = document.getElementById("load-count")! as HTMLParagraphElement;
+(window as any).electronAPI.onUpdateCounter((e: any, value: string) => {
+  counter.textContent = value;
+});

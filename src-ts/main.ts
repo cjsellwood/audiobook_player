@@ -1,4 +1,11 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeImage } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  Menu,
+  nativeImage,
+} from "electron";
 import path from "path";
 import * as fs from "node:fs/promises";
 import * as mm from "music-metadata";
@@ -109,6 +116,12 @@ app.whenReady().then(() => {
     await fs.mkdir(app.getPath("userData") + "/images");
 
     for (let i = 0; i < audioBookPaths.length; i++) {
+      // Send loading status to UI
+      mainWindow.webContents.send(
+        "update-counter",
+        `${i + 1} / ${audioBookPaths.length}`
+      );
+
       console.log(i, audioBookPaths[i]);
       const metadata = await getMetadata(audioBookPaths[i]);
       console.log("got metadata");
