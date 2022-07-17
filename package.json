@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
-    "watch": "tsc --watch & nodemon --watch src -e js,ts,html,css --exec 'electron .'",
+    "watch": "tsc --watch & nodemon --watch src -e js,ts,html,css,svg --exec 'electron .'",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
