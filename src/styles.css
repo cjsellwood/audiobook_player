@@ -382,8 +382,3 @@ body::-webkit-scrollbar-thumb {
   -ms-border-radius: 8px;
   -o-border-radius: 8px;
 }
-
-::-webkit-scrollbar-button {
-  background-color: var(--sidebar-background);
-  display: none;
-}

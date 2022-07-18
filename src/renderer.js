@@ -68,6 +68,10 @@ const renderSideBar = (audioBook) => {
         findButton.textContent = "Find File";
         // Find file from file picker
         findButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+            const loader = document.querySelector(".lds-ring");
+            loader.style.display = "flex";
+            const counter = document.getElementById("load-count");
+            counter.textContent = "";
             const newAudiobook = yield window.electronAPI.findFile();
             audioBook.path = newAudiobook.path;
             audioBook.title = newAudiobook.title;
@@ -98,6 +102,7 @@ const renderSideBar = (audioBook) => {
                 audioBook.bitrate = (audioBook.size / audioBook.duration) * 8;
             }
             localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
+            loader.style.display = "none";
             renderAudioBooks();
             selected = "";
             renderSideBar(audioBook);

@@ -89,6 +89,12 @@ const renderSideBar = (audioBook: Audiobook) => {
 
     // Find file from file picker
     findButton.addEventListener("click", async () => {
+      const loader = document.querySelector(".lds-ring")! as HTMLDivElement;
+      loader.style.display = "flex";
+      const counter = document.getElementById(
+        "load-count"
+      )! as HTMLParagraphElement;
+      counter.textContent = "";
       const newAudiobook = await (window as any).electronAPI.findFile();
       audioBook.path = newAudiobook.path;
       audioBook.title = newAudiobook.title;
@@ -128,6 +134,7 @@ const renderSideBar = (audioBook: Audiobook) => {
       }
 
       localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
+      loader.style.display = "none";
       renderAudioBooks();
       selected = "";
       renderSideBar(audioBook);
