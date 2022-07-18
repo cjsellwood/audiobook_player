@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" fill="white" viewBox="0 0 512 512">
+  <path transform="scale(48, 42) translate(-3, -2)"
+    d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+  <line x1="110" y1="053" x2="190" y2="053" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="103" x2="255" y2="103" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="153" x2="320" y2="153" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="203" x2="385" y2="203" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="252" x2="430" y2="252" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="303" x2="385" y2="303" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="353" x2="320" y2="353" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="403" x2="255" y2="403" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <line x1="110" y1="453" x2="190" y2="453" stroke="black" stroke-width="8" stroke-linecap="round"/>
+</svg>
