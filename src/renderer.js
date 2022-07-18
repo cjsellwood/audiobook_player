@@ -64,9 +64,19 @@ const renderSideBar = (audioBook) => {
         (_c = document.getElementById("buttonsContainer")) === null || _c === void 0 ? void 0 : _c.remove();
         const notFound = document.createElement("div");
         notFound.id = "notFound";
-        const notFoundText = document.createElement("p");
-        notFoundText.textContent = "File not found";
-        notFound.append(notFoundText);
+        const findButton = document.createElement("button");
+        findButton.textContent = "Find File";
+        // Find file from file picker
+        findButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+            const newPath = yield window.electronAPI.findFile();
+            console.log(newPath, audioBook);
+            audioBook.path = newPath;
+            localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
+            renderAudioBooks();
+            selected = "";
+            renderSideBar(audioBook);
+        }));
+        notFound.append(findButton);
         sideBarBook.append(notFound);
     });
     // Seek bar

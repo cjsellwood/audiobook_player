@@ -156,7 +156,20 @@ app.whenReady().then(() => {
     return audioBooks;
   }
 
+  async function handleFindFile() {
+    const input = await dialog.showOpenDialog({
+      properties: ["openFile"],
+    });
+
+    if (input.canceled) {
+      return;
+    }
+
+    return input.filePaths[0];
+  }
+
   ipcMain.handle("dialog:openDir", handleDirOpen);
+  ipcMain.handle("dialog:findFile", handleFindFile);
 });
 
 app.on("window-all-closed", () => {

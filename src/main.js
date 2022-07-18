@@ -139,7 +139,19 @@ electron_1.app.whenReady().then(() => {
             return audioBooks;
         });
     }
+    function handleFindFile() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const input = yield electron_1.dialog.showOpenDialog({
+                properties: ["openFile"],
+            });
+            if (input.canceled) {
+                return;
+            }
+            return input.filePaths[0];
+        });
+    }
     electron_1.ipcMain.handle("dialog:openDir", handleDirOpen);
+    electron_1.ipcMain.handle("dialog:findFile", handleFindFile);
 });
 electron_1.app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
