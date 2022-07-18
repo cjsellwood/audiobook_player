@@ -33,11 +33,25 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "src/images/icon"
+        "icon": "src/images/icon",
+        "executableName": "Audiobook Player",
+        "name": "Audiobook Player",
+        "win32metadata": {
+          "CompanyName": "Audiobook Player",
+          "File Description": "Audiobook Player",
+          "InternalName": "Audiobook Player",
+          "OriginalFilename": "Audiobook Player",
+          "ProductName": "Audiobook Player"
+        }
       },
       "makers": [
         {
-          "name": "@electron-forge/maker-squirrel"
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "title": "Audiobook Player",
+            "setupExe": "Audiobook Player Setup.exe",
+            "exe": "Audiobook Player.exe"
+          }
         },
         {
           "name": "@electron-forge/maker-deb",
