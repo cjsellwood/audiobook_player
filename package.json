@@ -55,7 +55,11 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "name": "audiobook_player",
+            "productName": "Audiobook Player",
+            "bin": "Audiobook Player"
+          }
         }
       ]
     }

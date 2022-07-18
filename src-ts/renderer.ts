@@ -89,9 +89,43 @@ const renderSideBar = (audioBook: Audiobook) => {
 
     // Find file from file picker
     findButton.addEventListener("click", async () => {
-      const newPath = await (window as any).electronAPI.findFile();
-      console.log(newPath, audioBook);
-      audioBook.path = newPath;
+      const newAudiobook = await (window as any).electronAPI.findFile();
+      audioBook.path = newAudiobook.path;
+      audioBook.title = newAudiobook.title;
+      audioBook.author = newAudiobook.author;
+      audioBook.year = newAudiobook.year;
+      audioBook.path = newAudiobook.path;
+      audioBook.duration = newAudiobook.duration;
+      audioBook.bitrate = newAudiobook.bitrate;
+
+      // Add duration for files that don't have it in metadata
+      if (isNaN(audioBook.duration) || audioBook.duration < 1000) {
+        const audioContainer = document.getElementById(
+          "audioContainer"
+        )! as HTMLDivElement;
+        audioContainer.replaceChildren();
+        const audioPlayer = document.createElement("audio");
+        const source = document.createElement("source");
+
+        source.src = audioBook.path;
+
+        audioPlayer.append(source);
+        audioContainer.append(audioPlayer);
+
+        const durationPromise = new Promise((resolve): void => {
+          audioPlayer.addEventListener("loadedmetadata", () => {
+            audioBook.duration = audioPlayer.duration;
+            resolve(1);
+          });
+        });
+
+        await durationPromise;
+      }
+
+      // Fix bit rates from files with NaN bitrate
+      if (isNaN(audioBook.bitrate) || audioBook.bitrate < 1000) {
+        audioBook.bitrate = (audioBook.size / audioBook.duration) * 8;
+      }
 
       localStorage.setItem(`ab_${audioBook.id}`, JSON.stringify(audioBook));
       renderAudioBooks();

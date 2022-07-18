@@ -55,6 +55,7 @@ const createWindow = () => {
         },
         show: false,
         icon: icon,
+        autoHideMenuBar: true,
     });
     win.loadFile("src/index.html");
     win.showInactive();
@@ -140,6 +141,7 @@ electron_1.app.whenReady().then(() => {
         });
     }
     function handleFindFile() {
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
             const input = yield electron_1.dialog.showOpenDialog({
                 properties: ["openFile"],
@@ -147,7 +149,25 @@ electron_1.app.whenReady().then(() => {
             if (input.canceled) {
                 return;
             }
-            return input.filePaths[0];
+            const metadata = yield getMetadata(input.filePaths[0]);
+            let imageFile = electron_1.app.getPath("userData") + "/images/default.jpeg";
+            const id = (0, uuid_1.v4)();
+            if (metadata.common.picture) {
+                imageFile = `${electron_1.app.getPath("userData")}/images/${id}${metadata.common.picture[0].format.replace("image/", ".")}`;
+                yield fs.writeFile(imageFile, metadata.common.picture[0].data);
+            }
+            const stats = yield fs.stat(input.filePaths[0]);
+            return {
+                id: id,
+                path: input.filePaths[0],
+                author: (_a = metadata.common) === null || _a === void 0 ? void 0 : _a.artist,
+                year: (_b = metadata.common) === null || _b === void 0 ? void 0 : _b.year,
+                title: (_c = metadata.common) === null || _c === void 0 ? void 0 : _c.title,
+                bitrate: (_d = metadata.format) === null || _d === void 0 ? void 0 : _d.bitrate,
+                duration: (_e = metadata.format) === null || _e === void 0 ? void 0 : _e.duration,
+                cover: path_1.default.resolve(imageFile),
+                size: stats.size,
+            };
         });
     }
     electron_1.ipcMain.handle("dialog:openDir", handleDirOpen);

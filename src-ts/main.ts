@@ -48,6 +48,7 @@ const createWindow = () => {
     },
     show: false,
     icon: icon,
+    autoHideMenuBar: true,
   });
 
   win.loadFile("src/index.html");
@@ -165,7 +166,32 @@ app.whenReady().then(() => {
       return;
     }
 
-    return input.filePaths[0];
+    const metadata = await getMetadata(input.filePaths[0]);
+    let imageFile = app.getPath("userData") + "/images/default.jpeg";
+    const id = uuidv4();
+    if (metadata.common.picture) {
+      imageFile = `${app.getPath(
+        "userData"
+      )}/images/${id}${metadata.common.picture[0].format.replace(
+        "image/",
+        "."
+      )}`;
+      await fs.writeFile(imageFile, metadata.common.picture[0].data);
+    }
+
+    const stats = await fs.stat(input.filePaths[0]);
+
+    return {
+      id: id,
+      path: input.filePaths[0],
+      author: metadata.common?.artist,
+      year: metadata.common?.year,
+      title: metadata.common?.title,
+      bitrate: metadata.format?.bitrate,
+      duration: metadata.format?.duration,
+      cover: path.resolve(imageFile),
+      size: stats.size,
+    };
   }
 
   ipcMain.handle("dialog:openDir", handleDirOpen);
